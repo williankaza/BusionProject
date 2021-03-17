@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -27,7 +28,6 @@ public class OnibusServiceImpl implements OnibusService {
     @Override
     public OnibusDTO create(Long idLinha, OnibusCreateUpdateDTO onibusCreateUpdateDTO) {
         Linha linhaExistente = this.linhaService.findLinhaById(idLinha);
-
         Onibus novoOnibus = new Onibus(linhaExistente);
         novoOnibus.setCodigo( onibusCreateUpdateDTO.getCodigo() );
         novoOnibus.setAtivo( onibusCreateUpdateDTO.isAtivo() );
@@ -62,7 +62,8 @@ public class OnibusServiceImpl implements OnibusService {
         return this.onibusRepository
                 .findAll()
                 .stream()
-                .filter( onibus -> onibus.isAtivo() )
+                .filter( onibus -> onibus.isAtivo() &&
+                         onibus.getLinha().getId() == idLinha)
                 .map( onibus -> new OnibusDTO(onibus) )
                 .collect( Collectors.toList() );
     }

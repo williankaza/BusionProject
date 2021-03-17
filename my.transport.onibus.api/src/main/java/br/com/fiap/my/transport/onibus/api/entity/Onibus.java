@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Entity
 @Table(name="TB_Onibus")
 public class Onibus {
@@ -22,8 +21,7 @@ public class Onibus {
 
     private boolean ativo;
 
-    @OneToMany()
-    @JoinColumn( name = "id_posicao")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<Posicao> posicao = new HashSet<>();
 
     public Onibus(){

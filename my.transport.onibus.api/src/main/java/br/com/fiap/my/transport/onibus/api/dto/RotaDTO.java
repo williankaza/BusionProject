@@ -1,27 +1,26 @@
-package br.com.fiap.my.transport.onibus.api.entity;
+package br.com.fiap.my.transport.onibus.api.dto;
 
-import javax.persistence.*;
+import br.com.fiap.my.transport.onibus.api.entity.Linha;
+import br.com.fiap.my.transport.onibus.api.entity.Rota;
 
-@Entity
-@Table(name = "TB_Rota")
-public class Rota {
-    @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY)
-    @Column(name = "id_rota")
+public class RotaDTO {
     private Long id;
     private Integer ordem;
     private String latitude;
     private String longitude;
     private boolean ativo;
-
-    @ManyToOne()
-    @JoinColumn( name = "id_linha")
     private Linha linha;
 
-    public Rota(){}
+    public RotaDTO(){ super(); }
 
-    public Rota(Linha linha){
-        this.linha = linha;
+    public RotaDTO(Rota rota){
+        super();
+        this.id = rota.getId();
+        this.ativo = rota.isAtivo();
+        this.latitude = rota.getLatitude();
+        this.longitude = rota.getLongitude();
+        this.linha = rota.getLinha();
+        this.ordem = rota.getOrdem();
     }
 
     public Long getId() {
@@ -30,6 +29,14 @@ public class Rota {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getOrdem() {
+        return ordem;
+    }
+
+    public void setOrdem(Integer ordem) {
+        this.ordem = ordem;
     }
 
     public String getLatitude() {
@@ -63,8 +70,4 @@ public class Rota {
     public void setLinha(Linha linha) {
         this.linha = linha;
     }
-
-    public Integer getOrdem() { return ordem; }
-
-    public void setOrdem(Integer ordem) { this.ordem = ordem; }
 }

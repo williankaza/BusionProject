@@ -7,12 +7,11 @@ import br.com.fiap.my.transport.onibus.api.service.OnibusService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @CrossOrigin
-@RequestMapping("onibus")
+@RequestMapping("linha/{idLinha}/onibus")
 public class OnibusController {
     private final OnibusService onibusService;
 
@@ -20,17 +19,36 @@ public class OnibusController {
         this.onibusService = onibusService;
     }
 
-    @PostMapping("{idLinha}")
-    @ResponseStatus( HttpStatus.CREATED)
-    public List<OnibusDTO> create(@RequestBody List<OnibusCreateUpdateDTO> onibusCreateUpdateDTOS,
+    @PostMapping("")
+    @ResponseStatus( HttpStatus.CREATED )
+    public OnibusDTO create(@RequestBody OnibusCreateUpdateDTO onibusCreateUpdateDTOS,
                                   @PathVariable Long idLinha){
-        List<OnibusDTO> onibusDTOS = new ArrayList<>();
+        OnibusDTO onibusDTO = this.onibusService.create(idLinha, onibusCreateUpdateDTOS);
 
-        for (int i = 0; i < onibusCreateUpdateDTOS.size(); i++) {
-            OnibusDTO onibusDTO = this.onibusService.create(idLinha, onibusCreateUpdateDTOS.get(i));
-            onibusDTOS.add(onibusDTO);
-        }
+        return onibusDTO;
+    }
 
-        return onibusDTOS;
+    @PutMapping("{idOnibus}")
+    public OnibusDTO update(@RequestBody OnibusCreateUpdateDTO onibusCreateUpdateDTO,
+                            @PathVariable Long idLinha,
+                            @PathVariable Long idOnibus){
+        OnibusDTO onibusDTO = this.onibusService.update(idOnibus, onibusCreateUpdateDTO);
+
+        return onibusDTO;
+    }
+
+    @DeleteMapping("{idOnibus}")
+    public void delete(@PathVariable Long idLinha, @PathVariable Long idOnibus){
+        this.onibusService.delete(idOnibus);
+    }
+
+    @GetMapping("")
+    public List<OnibusDTO> getAllByIdLinha(@PathVariable Long idLinha){
+        return this.onibusService.findAllByLinha(idLinha);
+    }
+
+    @GetMapping("{idOnibus}")
+    public OnibusDTO getOnibusById(@PathVariable Long idOnibus){
+        return this.onibusService.findById(idOnibus);
     }
 }

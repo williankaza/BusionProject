@@ -20,6 +20,12 @@ public class Posicao {
     private LocalDateTime dataAtualizacao;
     private int lotacaoAtual;
 
+    public Posicao(){}
+
+    public Posicao(Onibus onibus){
+        this.onibus = onibus;
+    }
+
     public int getLotacaoAtual() {
         return lotacaoAtual;
     }
