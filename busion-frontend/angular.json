@@ -123,5 +123,8 @@
       }
     }
   },
-  "defaultProject": "busion-frontend"
+  "defaultProject": "busion-frontend",
+  "cli": {
+    "analytics": "a51da60b-862a-4e15-abf6-88846d01435e"
+  }
 }

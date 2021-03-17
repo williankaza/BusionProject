@@ -9,18 +9,17 @@ import { PoMenuItem } from '@po-ui/ng-components';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
   constructor(private router: Router){
-
   }
   readonly menus: Array<PoMenuItem> = [
-    { label: 'Usuario', action: ()=>this.goTo('usuarios') },
-    { label: 'Linhas', action: ()=>this.goTo('linhas') }
+    { label: 'Routes', action: ()=>this.goTo('linhas') },
+    { label: 'Favorites', action: ()=>this.goTo('favoritos') },
+    { label: 'Schedule', action: ()=>this.goTo('schedule') },
+    { label: 'Account', action: ()=>this.goTo('usuarios') }
   ];
 
   private goTo(url: string) {
     this.router.navigate([url])
   }
-
 
 }

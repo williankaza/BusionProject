@@ -1,0 +1,53 @@
+.template{
+    color: #546569;
+}
+
+.po-font-title{
+    width: 100%; 
+    height: 450px; 
+}
+
+
+.background{
+    background-size: 150%;
+    position: top;
+    background-repeat: no-repeat;
+}
+
+:host ::ng-deep .po-button{
+    background-color: #FFAC2B;
+    color: black;
+    border: white;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+:host ::ng-deep .btnAcao button.po-button.po-text-ellipsis.po-button-primary:hover {
+    background-color: #FFAC2B;
+}
+
+:host ::ng-deep .btnDisabled  button.po-button{
+    background-color: #FF4600;
+}
+
+:host ::ng-deep .btnEnabled  button.po-button{
+    background-color: #04E762;
+}
+
+:host ::ng-deep .btnDisabled  button.po-button:hover{
+    opacity: 0.9;
+}
+
+:host ::ng-deep .btnEnabled  button.po-button:hover{
+    opacity: 0.9;
+}
+
+:host ::ng-deep button.po-button.po-text-ellipsis.po-button-primary:disabled {
+    background-color: #B4BDC8;
+    color: white;
+    font-weight: 400;
+}
+
+:host ::ng-deep .po-pt-2.po-row{
+    font-weight: bold;
+}
