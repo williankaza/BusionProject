@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { PoNotificationService } from '@po-ui/ng-components';
 import { Generics } from 'src/app/core/generics';
 import { HttpService } from 'src/app/services/http.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PoDialogService, PoSelectOption } from '@po-ui/ng-components';
+import { PoCheckboxGroupOption, PoDatepickerIsoFormat, PoRadioGroupOption } from '@po-ui/ng-components';
 
 @Component({
   selector: 'app-cadastro-usuario',
@@ -13,9 +16,9 @@ import { HttpService } from 'src/app/services/http.service';
 export class CadastroUsuarioComponent implements OnInit {
 
   userId: number
-  name: string
+  @Input() name: string
   email: string
-  birthDate: string
+  @Input() birthDate: string | Date
   ngForm: any;
   blockSave: boolean = false
 
@@ -41,7 +44,7 @@ export class CadastroUsuarioComponent implements OnInit {
   initDadosUsuario(){
     this.name = 'Teste'
     this.email = 'teste@teste.com.br'
-    this.birthDate = '20/09/2011'
+    this.birthDate = new Date(1995,11,17), Validators.required
   }
 
   getUser(userId: number){
@@ -130,6 +133,6 @@ interface BodyCadastro {
   userId?: number,
   name: string,
   email: string,
-  birthDate: string,
+  birthDate: string | Date,
   dataAtualizacao: string
 }

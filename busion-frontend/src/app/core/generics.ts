@@ -1,16 +1,30 @@
 export interface User{
-    id: string,
+    id: number,
     name: String
     email: String
-    birthDate: String
+    birthDate: string | Date 
     ultimoCadastro: Array<UltimoCadastro>
+}
+
+export interface Users{
+    id: string,
+    qtdCadastros: number,
+    lastCadastro: Array<Cadastro>
 }
   
 export interface UltimoCadastro{
     name: string
     email: string
-    birthDate: string
+    birthDate: string | Date
     dataAtualizacao: string
+}
+
+export interface Cadastro{
+    id: number,
+    name?: string
+    email?: string
+    birthDate?: string | Date
+    dataAtualizacao?: string
 }
 
 export class Generics{
