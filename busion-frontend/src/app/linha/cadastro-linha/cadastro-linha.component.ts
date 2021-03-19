@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { PoNotificationService } from '@po-ui/ng-components';
-import { GenericsLines } from 'src/app/core/generics';
+import { GenericsLines, Onibus, Rota } from 'src/app/core/generics';
 import { HttpService } from 'src/app/services/http.service';
 
 @Component({
@@ -15,11 +15,12 @@ export class CadastroLinhaComponent implements OnInit {
   lineId: number
   lineCod: number
   enabled: boolean = true
-  //onibus: Array<Onibus>
-  //rotas: Array<Rotas>
+  onibus: Array<Onibus>
+  rotas: Array<Rota>
 
   ngForm: any;
   blockSave: boolean = false
+  tipoOp: string;
 
   constructor(private httpService: HttpService, 
     private poNotification: PoNotificationService,
@@ -30,7 +31,8 @@ export class CadastroLinhaComponent implements OnInit {
 
   ngOnInit(): void {
     this.restore();
-    let lineId = this.route.snapshot.paramMap.get("codUser"); //alterar
+    let lineId = this.route.snapshot.paramMap.get("idLinha"); //alterar
+    this.tipoOp = this.route.snapshot.data['opLinha']
 
     if (lineId != null){
       this.lineId = parseInt(lineId)
@@ -48,19 +50,50 @@ export class CadastroLinhaComponent implements OnInit {
   }
 
   getLine(lineId: number){
-    this.httpService.get('user', '/user').subscribe( //alterar aqui
+    this.httpService.get('Busca Linha', 'mslinha/linha/' + lineId.toString()).subscribe( //alterar aqui
       (response)=>{
-        response.forEach(lines => {
-          if (lines.lineId == this.lineId){
-            let ultimoCadastro = GenericsLines.getDadosUltimoCadastroLine(lines.cadastros)
+        let linhaLocalizada = response
+        if (linhaLocalizada == undefined){
+          console.log('deu ruim')
+        } else {
+            this.lineCod = linhaLocalizada.lineCod
+            this.enabled = linhaLocalizada.enabled
 
-            if (ultimoCadastro != undefined){
-              this.lineCod = ultimoCadastro.lineCod
-              this.enabled = ultimoCadastro.enabled
-              //this.onibus = ultimoCadastro.onibus
-              //this.rotas = ultimoCadastro.rotas
-            }
+            this.getOnibus(this.lineId)
+            this.getRotas(this.lineId)
+        }
+      }
+    )
+  }
+
+  getOnibus(lineId: number){
+    this.httpService.get('Busca Onibus', 'mslinha/linha/' + lineId.toString() + '/onibus').subscribe(
+      (response)=>{
+        response.forEach(onibus => {
+          let onibusLocalizado: Onibus ={
+            busId: onibus.id,
+            busCod: onibus.codigo,
+            enabled: onibus.ativo
           }
+
+          this.onibus.push(onibusLocalizado)
+        });
+      }
+    )
+  }
+
+  getRotas(lineId: number){
+    this.httpService.get('Busca Rotas', 'mslinha/linha/' + lineId.toString() + '/rota').subscribe(
+      (response)=>{
+        response.forEach(rota => {
+          let rotaLocalizada: Rota ={
+            rotaId: rota.id,
+            latitude: rota.latitude,
+            longitude: rota.longitude,
+            ordem: rota.ordem
+          }
+
+          this.rotas.push(rotaLocalizada)
         });
       }
     )
@@ -98,6 +131,7 @@ export class CadastroLinhaComponent implements OnInit {
         response=>{ 
           this.blockSave = false  
           this.poNotification.success("Nova linha cadastrada com sucesso!")
+          this.router.navigateByUrl('/linhas/' + response.id)
         }
       )
     } else {
@@ -138,3 +172,4 @@ interface BodyCadastro {
   //onibus: number,
   dataAtualizacao: string
 }
+

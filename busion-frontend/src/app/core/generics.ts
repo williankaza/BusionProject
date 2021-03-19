@@ -17,8 +17,6 @@ export interface Linha{
     lineId: number
     lineCod: number
     enabled: boolean
-    //onibus: Array<Onibus>
-    //rotas: Array<Rotas>
     dataAtualizacao: string
 }
 
@@ -26,8 +24,6 @@ export interface UltimoCadastroLines{
     lineId: number
     lineCod: number
     enabled: boolean
-    //onibus: Array<Onibus>
-    //rotas: Array<Rotas>
     dataAtualizacao: string
 }
 
@@ -38,6 +34,20 @@ export interface UltimoCadastroBus{
     posicao: null
     //linha: Array<Linha>
     dataAtualizacao: string
+}
+
+export interface Onibus{
+    busId: number
+    busCod: string
+    enabled: boolean
+}
+
+export interface Rota{
+    rotaId: number
+    latitude:string
+    longitude:string
+    ordem: number
+  
 }
 
 export class Generics{
