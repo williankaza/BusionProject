@@ -1,1 +1,18 @@
-<p>consulta-usuario works!</p>
+<body class="bodyCadastro">
+    <div class="po-offset-xl-6 po-offset-lg-6 po-offset-sm-6 po-offset-md-6 po-lg-6 po-md-6 po-sm-6 po-pull-right po-pb-2">
+        <span class="po-font-title">Consult The User</span>
+    </div>
+    <div class="monitor po-row po-lg-12 po-sm-12 po-xl-12 po-md-12" >
+        <po-container class="po-pl-0 po-lg-12 po-xl-12 po-sm-12 po-md-12">
+            <po-table class="po-pl-0 po-lg-12 po-md-12 po-sm-12 po-xl-12"
+                [p-columns]="gridCols"
+                [p-items]="listUsers"
+                p-hide-columns-manager=true
+                >
+            </po-table>
+        </po-container>
+    </div>
+    <span class="po-offset-xl-6 po-offset-lg-6 po-offset-sm-6 po-offset-md-6 po-lg-6 po-md-6 po-sm-6 po-pr-0 po-pl-0">
+        <po-button class="po-pull-right po-pt-2 po-pl-2 po-pr-0" p-label="New Register" (p-click)="goToCadastro()"></po-button>
+    </span>
+</body>

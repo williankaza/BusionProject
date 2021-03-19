@@ -5,7 +5,11 @@
   "projects": {
     "busion-frontend": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -25,7 +29,7 @@
             ],
             "styles": [
               "./node_modules/@po-ui/style/css/po-theme-default.min.css",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -90,7 +94,7 @@
             ],
             "styles": [
               "./node_modules/@po-ui/style/css/po-theme-default.min.css",
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           }
@@ -123,5 +127,8 @@
       }
     }
   },
-  "defaultProject": "busion-frontend"
+  "defaultProject": "busion-frontend",
+  "cli": {
+    "analytics": "a51da60b-862a-4e15-abf6-88846d01435e"
+  }
 }

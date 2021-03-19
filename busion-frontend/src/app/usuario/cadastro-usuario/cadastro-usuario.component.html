@@ -1,1 +1,28 @@
-<p>cadastro-usuario works!</p>
+<body class="bodyCadastro">               
+            <div class="po-offset-xl-6 po-offset-lg-6 po-offset-sm-6 po-offset-md-6 po-lg-6 po-md-6 po-sm-6 po-pull-right po-pb-2">
+                <span class="po-font-title">Register The User</span>
+            </div>
+
+            <span class="template po-offset-xl-6 po-offset-lg-6 po-offset-sm-6 po-offset-md-6 po-lg-6 po-md-6 po-sm-6 po-pull-right po-pb-2 po-pr-0 po-pl-0">
+                <div class="po-row">
+                    <po-number #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="userId" p-label="UserID"></po-number>
+                </div>
+
+                <div class="po-row">
+                    <po-input #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="name" p-label="Name"></po-input>
+                </div>
+
+                <div class="po-row">                
+                    <po-email #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="email" p-label="Email"> </po-email>
+                </div>
+
+                <div class="po-row">
+                    <po-input #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="birthDate" p-label="Birth Date" p-min="-180" p-max="180" p-decimals-length=4></po-input>
+                </div>
+
+                <div class="po-row po-pt-2">
+                    <po-button class="po-md-3 btnAcao po-pl-0" p-type="primary" p-label="Back" (p-click)="goBack()"></po-button>
+                    <po-button class="po-md-3 btnAcao po-pl-0" p-type="primary" p-label="Save" (p-click)="salvar()" [p-loading]="blockSave"></po-button>
+                </div>
+            </span>
+</body> 
