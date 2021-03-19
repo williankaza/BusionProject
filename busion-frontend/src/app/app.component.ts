@@ -12,10 +12,10 @@ export class AppComponent {
   constructor(private router: Router){
   }
   readonly menus: Array<PoMenuItem> = [
-    { label: 'Routes', action: ()=>this.goTo('linhas') },
-    { label: 'Favorites', action: ()=>this.goTo('favoritos') },
-    { label: 'Schedule', action: ()=>this.goTo('schedule') },
-    { label: 'Account', action: ()=>this.goTo('usuarios') }
+    { label: 'Lines', action: ()=>this.goTo('linhas') },
+    { label: 'Bus', action: ()=>this.goTo('onibus') },
+    { label: 'Routes', action: ()=>this.goTo('rota') },
+    { label: 'User', action: ()=>this.goTo('usuarios') }
   ];
 
   private goTo(url: string) {

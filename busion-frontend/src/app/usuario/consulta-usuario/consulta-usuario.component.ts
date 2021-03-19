@@ -1,19 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { PoTableColumn, PoTableAction, PoTableDetail } from '@po-ui/ng-components';
-import { MouseEvent, AgmCoreModule } from '@agm/core';
+import { PoTableColumn, PoTableDetail } from '@po-ui/ng-components';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
 import { HttpService } from 'src/app/services/http.service';
-
-
-// just an interface for type safety.
-interface marker {
-	lat: number;
-	lng: number;
-	label?: string;
-	draggable: boolean;
-}
 
 export interface Users{
   id: number,
@@ -114,7 +103,5 @@ export class ConsultaUsuarioComponent implements OnInit {
         }
       });
     })
-  }
-
- 
+  } 
 }

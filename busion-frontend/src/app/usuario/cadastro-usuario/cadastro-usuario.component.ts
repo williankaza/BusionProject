@@ -4,9 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PoNotificationService } from '@po-ui/ng-components';
 import { Generics } from 'src/app/core/generics';
 import { HttpService } from 'src/app/services/http.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { PoDialogService, PoSelectOption } from '@po-ui/ng-components';
-import { PoCheckboxGroupOption, PoDatepickerIsoFormat, PoRadioGroupOption } from '@po-ui/ng-components';
+import { Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-cadastro-usuario',
@@ -51,7 +49,7 @@ export class CadastroUsuarioComponent implements OnInit {
     this.httpService.get('user', '/user').subscribe( //alterar aqui
       (response)=>{
         response.forEach(user => {
-          if (user.idDrone == this.userId){
+          if (user.userId == this.userId){
             let ultimoCadastro = Generics.getDadosUltimoCadastro(user.cadastros)
 
             if (ultimoCadastro != undefined){
