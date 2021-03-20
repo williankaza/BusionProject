@@ -37,9 +37,6 @@ export class ConsultaLinhaComponent implements OnInit {
       { property: 'lineId', label: 'Sequencial' },
       { property: 'lineCod', label: 'Line Cod', type: 'string'},
       { property: 'enabled', label: 'Ativo', type: 'boolean' },
-      // { property: 'onibus', label: 'Birth Date', type: 'number' },  //verificar
-      // { property: 'rotas', label: 'Birth Date', type: 'number' },
-      { property: 'dataAtualizacao', label: 'Data atualização', type: 'string'}
     ], 
     typeHeader: 'top'
   };
@@ -58,14 +55,6 @@ export class ConsultaLinhaComponent implements OnInit {
       label: 'Active',
       property: 'enabled', 
     },
-    // {
-    //   label: 'Onibus',
-    //   property: 'onibus', 
-    // },
-    // {
-    //   label: 'Rotas',
-    //   property: 'rotas', 
-    // },
     { property: 'medicoes', label: 'Details', type: 'detail', detail: this.cadastroDetail }
   ]
 
@@ -82,7 +71,6 @@ export class ConsultaLinhaComponent implements OnInit {
 
   goToCadastro(){
     window.open(this.router.url + '/cadastro-linhas/')
-    //this.router.navigate(['./cadastro'], { relativeTo: this.route })
   }
 
   loadGrid(){
@@ -97,14 +85,10 @@ export class ConsultaLinhaComponent implements OnInit {
             id: line.lineId,
             lineCod: line.cadastros[lastCadastroIndex].lineCod,
             enabled: line.cadastros[lastCadastroIndex].enabled,
-            // onibus: line.cadastros[lastCadastroIndex].onibus,
-            // rotas: line.cadastros[lastCadastroIndex].rotas,
             cadastros: (<Array<any>>line.cadastros).filter(cadastro => cadastro.enabled).map((cadastro)=>{
               return <Cadastro> {
                 lineCod: cadastro.lineCod,
                 enabled: cadastro.enabled,
-                // onibus: cadastro.onibus,
-                // rotas: cadastro.rotas,
                 dataAtualizacao: new Date(cadastro.dataAtualizacao).toLocaleString()
               }            
             })

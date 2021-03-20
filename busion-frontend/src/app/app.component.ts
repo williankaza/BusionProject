@@ -13,8 +13,6 @@ export class AppComponent {
   }
   readonly menus: Array<PoMenuItem> = [
     { label: 'Lines', action: ()=>this.goTo('linhas') },
-    { label: 'Bus', action: ()=>this.goTo('onibus') },
-    { label: 'Routes', action: ()=>this.goTo('rota') },
     { label: 'User', action: ()=>this.goTo('usuarios') }
   ];
 

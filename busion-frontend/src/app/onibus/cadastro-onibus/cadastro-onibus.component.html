@@ -1,6 +1,6 @@
 <po-page-default class="bodyCadastro">               
     <div class="po-offset-xl-6 po-offset-lg-6 po-offset-sm-6 po-offset-md-6 po-lg-6 po-md-6 po-sm-6 po-pull-right po-pb-2">
-        <span class="po-font-title">Register The User</span>
+        <span class="po-font-title">Register The Bus</span>
     </div>
 
     <span class="template po-offset-xl-6 po-offset-lg-6 po-offset-sm-6 po-offset-md-6 po-lg-6 po-md-6 po-sm-6 po-pull-right po-pb-2 po-pr-0 po-pl-0">
@@ -11,18 +11,6 @@
         <div class="po-row">
             <po-number #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="busCod" p-label="Bus Code"></po-number>
         </div>
-
-        <div class="po-row">
-            <po-number #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="posicao" p-label="Posição"></po-number>
-        </div>
-
-        <!-- <div class="po-row">                
-            <po-number #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="onibus" p-label="Onibus"> </po-number>
-        </div> -->
-
-        <!-- <div class="po-row">
-            <po-input #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="rotas" p-label="Rotas" p-min="-180" p-max="180" p-decimals-length=4></po-input>
-        </div> -->
 
         <po-button
         [ngClass]="{
@@ -36,6 +24,15 @@
             <po-button class="po-md-3 btnAcao po-pl-0" p-type="primary" p-label="Back" (p-click)="goBack()"></po-button>
             <po-button class="po-md-3 btnAcao po-pl-0" p-type="primary" p-label="Save" (p-click)="salvar()" [p-loading]="blockSave"></po-button>
         </div>
-        <po-table ></po-table>
+
+        <div class="monitor po-row po-lg-12 po-sm-12 po-xl-12 po-md-12">
+            <po-container class="po-pl-0 po-lg-12 po-xl-12 po-sm-12 po-md-12">
+                <po-table class="po-pl-0 po-lg-12 po-md-12 po-sm-12 po-xl-12" 
+                *ngIf="tipoOp == 'alteracao'" 
+                [p-columns]="gridRouteCols"
+                [p-items]="rotas"
+                p-hide-columns-manager=true></po-table> <po-button p-label="Alter route" (p-click)="goAlterRoute()"></po-button>
+            </po-container>
+        </div>
     </span>
 </po-page-default> 

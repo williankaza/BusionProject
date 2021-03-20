@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { PoNotificationService } from '@po-ui/ng-components';
-import { GenericsBus } from 'src/app/core/generics';
+import { PoNotificationService, PoTableColumn, PoTableDetail } from '@po-ui/ng-components';
+import { Rota } from 'src/app/core/generics';
 import { HttpService } from 'src/app/services/http.service';
 
 @Component({
@@ -13,12 +13,13 @@ import { HttpService } from 'src/app/services/http.service';
 export class CadastroOnibusComponent implements OnInit {
 
   busId: number
-  busCod: number
+  busCod: string
   enabled: boolean = true
-  //linha: Array<Linha>
-  posicao: null
+  rotas: Array<Rota>
+
   ngForm: any;
   blockSave: boolean = false
+  tipoOp: string;
 
   constructor(private httpService: HttpService, 
     private poNotification: PoNotificationService,
@@ -29,65 +30,108 @@ export class CadastroOnibusComponent implements OnInit {
 
   ngOnInit(): void {
     this.restore();
-    let busId = this.route.snapshot.paramMap.get("codUser"); //alterar
+    let busId = this.route.snapshot.paramMap.get("idBus");
+    this.tipoOp = this.route.snapshot.data['opBus']
 
     if (busId != null){
       this.busId = parseInt(busId)
       this.getBus(this.busId)
     } else {
-      this.initDadosLines()
+      this.initDadosBus()
     }
   }
 
-  initDadosLines(){
-    this.busCod = 123
+  initDadosBus(){
+    this.busCod = '123'
     this.enabled = true
-    this.posicao = null
-    //this.linha = 
   }
 
   getBus(busId: number){
-    this.httpService.get('user', '/user').subscribe( //alterar aqui
+    this.httpService.get('Busca Ônibus', 'mslinha/linha/' + busId.toString()).subscribe( //alterar aqui
       (response)=>{
-        response.forEach(bus => {
-          if (bus.busId == this.busId){
-            let ultimoCadastro = GenericsBus.getDadosUltimoCadastroBus(bus.cadastros)
+        let onibusLocalizada = response
+        if (onibusLocalizada == undefined){
+          this.poNotification.error("Não foi possível cadastrar com sucesso!")
+        } else {
+            this.busCod = onibusLocalizada.busCod
+            this.enabled = onibusLocalizada.enabled
 
-            if (ultimoCadastro != undefined){
-              this.busCod = ultimoCadastro.busCod
-              this.enabled = ultimoCadastro.enabled
-              this.posicao = ultimoCadastro.posicao
-              //this.linha = ultimoCadastro.linha
-            }
+            this.getRotas(this.busId)
+        }
+      }
+    )
+  }
+
+  getRotas(rotaId: number){
+    this.httpService.get('Busca Rotas', 'mslinha/linha/' + rotaId.toString() + '/rota').subscribe(
+      (response)=>{
+        response.forEach(rota => {
+          let rotaLocalizada: Rota ={
+            rotaId: rota.id,
+            latitude: rota.latitude,
+            longitude: rota.longitude,
+            ordem: rota.ordem
           }
+
+          this.rotas.push(rotaLocalizada)
         });
       }
     )
   }
+
+  cadastroRouteDetail: PoTableDetail = {
+    columns: [
+      { property: 'rotaId', label: 'Sequencial' },
+      { property: 'latitude', label: 'Latitude', type: 'string'},
+      { property: 'longitude', label: 'Longitude', type: 'string'},
+      { property: 'ordem', label: 'Ordem', type: 'string'},
+    ], 
+    typeHeader: 'top'
+  };
+
+  gridRouteCols: Array<PoTableColumn> = [
+    {
+      label: 'Route Id',
+      property: 'rotaId',
+      visible: true
+    },
+    {
+      label: 'Latitude',
+      property: 'latitude', 
+    },
+    {
+      label: 'Longitude',
+      property: 'longitude', 
+    },
+    {
+    label: 'Ordem',
+    property: 'ordem', 
+    },
+    { property: 'medicoes', label: 'Details', type: 'detail', detail: this.cadastroRouteDetail }
+  ]
 
   createBodyLine(): BodyCadastro{
     return {
       busId : this.busId,
       busCod: this.busCod,
       enabled: this.enabled,
-      posicao: this.posicao,
-      //linha: this.linha,
       dataAtualizacao: new Date().toISOString(),
     }
   }
-
 
   restore() {
     this.busId = undefined;
     this.busCod = undefined;
     this.enabled = undefined;
-    this.posicao = undefined;
-    //this.linha = undefined;
     this.ngForm = undefined;
   }
 
   goBack(){
     this.router.navigateByUrl('/usuarios') //alterar
+  }
+
+  goAlterRoute(){
+    window.open(this.router.url + '/rota/')
   }
 
   salvar(){
@@ -98,6 +142,7 @@ export class CadastroOnibusComponent implements OnInit {
         response=>{ 
           this.blockSave = false  
           this.poNotification.success("Novo ônibus cadastrada com sucesso!")
+          this.router.navigateByUrl('/linhas/' + response.id)
         }
       )
     } else {
@@ -117,26 +162,14 @@ export class CadastroOnibusComponent implements OnInit {
       lOk = false;
     }
 
-    if (this.posicao == undefined){
-      this.poNotification.error("Informe a posição do Ônibus!")
-      lOk = false;
-    }
-
-    // if (this.linha == undefined){
-    //   this.poNotification.error("Informe a linha do Ônibus!")
-    //   lOk = false;
-    // }
-
     return lOk
   }
 }
 
 interface BodyCadastro {
-  busId?: number,
-  busCod: number,
+  busId: number,
+  busCod: string,
   enabled: boolean,
-  posicao: number,
-  //linha: number,
   dataAtualizacao: string
 }
 
