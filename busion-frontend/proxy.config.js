@@ -6,8 +6,8 @@ const proxy = [
 	},
 	{
 		context: "/msusuario",
-		target: "http://localhost:8081/api/v1",
-		pathRewrite: { "^/msusuario": "" },	
-	}
+		target: "http://localhost:8090/",
+		pathRewrite: { "^/msusuario": "" },
+	},
 ];
 module.exports = proxy;

@@ -1,175 +1,110 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
-import { PoNotificationService, PoTableColumn, PoTableDetail } from '@po-ui/ng-components';
-import { Rota } from 'src/app/core/generics';
-import { HttpService } from 'src/app/services/http.service';
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
+import { PoNotificationService } from "@po-ui/ng-components";
+import { Rota } from "src/app/core/generics";
+import { HttpService } from "src/app/services/http.service";
 
 @Component({
-  selector: 'app-cadastro-onibus',
-  templateUrl: './cadastro-onibus.component.html',
-  styleUrls: ['./cadastro-onibus.component.scss']
+	selector: "app-cadastro-onibus",
+	templateUrl: "./cadastro-onibus.component.html",
+	styleUrls: ["./cadastro-onibus.component.scss"],
 })
 export class CadastroOnibusComponent implements OnInit {
+	busId: number;
+	busCod: string;
+	enabled: boolean = true;
+	rotas: Array<Rota>;
 
-  busId: number
-  busCod: string
-  enabled: boolean = true
-  rotas: Array<Rota>
+	ngForm: any;
+	blockSave: boolean = false;
+	tipoOp: string;
+	lineId: number;
 
-  ngForm: any;
-  blockSave: boolean = false
-  tipoOp: string;
+	constructor(
+		private httpService: HttpService,
+		private poNotification: PoNotificationService,
+		private router: Router,
+		private route: ActivatedRoute
+	) {}
 
-  constructor(private httpService: HttpService, 
-    private poNotification: PoNotificationService,
-    private router: Router, 
-    private route: ActivatedRoute) { 
+	ngOnInit(): void {
+		this.restore();
+		let busId = this.route.snapshot.paramMap.get("idOnibus");
+		let lineId = this.route.snapshot.paramMap.get("idLinha");
+		this.tipoOp = this.route.snapshot.data["opBus"];
 
-  }
+		if (busId != null) {
+			this.busId = parseInt(busId);
+			this.lineId = parseInt(lineId);
+			this.getBus(this.busId, this.lineId);
+		} else {
+			this.initDadosBus();
+		}
+	}
 
-  ngOnInit(): void {
-    this.restore();
-    let busId = this.route.snapshot.paramMap.get("idBus");
-    this.tipoOp = this.route.snapshot.data['opBus']
+	initDadosBus() {
+		this.busCod = "123";
+		this.enabled = true;
+	}
 
-    if (busId != null){
-      this.busId = parseInt(busId)
-      this.getBus(this.busId)
-    } else {
-      this.initDadosBus()
-    }
-  }
+	getBus(busId: number, lineId: number) {
+		this.httpService.get("linha/" + lineId, "mslinha/" + busId).subscribe((response) => {
+			let onibusLocalizada = response;
+			if (onibusLocalizada == undefined) {
+				this.poNotification.error("Não foi possível cadastrar com sucesso!");
+			} else {
+				this.busCod = onibusLocalizada.codigo;
+				this.enabled = onibusLocalizada.ativo;
+			}
+		});
+	}
 
-  initDadosBus(){
-    this.busCod = '123'
-    this.enabled = true
-  }
+	createBodyBus(): BodyCadastro {
+		return {
+			codigo: this.busCod,
+			ativo: this.enabled,
+		};
+	}
 
-  getBus(busId: number){
-    this.httpService.get('Busca Ônibus', 'mslinha/linha/' + busId.toString()).subscribe( //alterar aqui
-      (response)=>{
-        let onibusLocalizada = response
-        if (onibusLocalizada == undefined){
-          this.poNotification.error("Não foi possível cadastrar com sucesso!")
-        } else {
-            this.busCod = onibusLocalizada.busCod
-            this.enabled = onibusLocalizada.enabled
+	restore() {
+		this.busId = undefined;
+		this.busCod = undefined;
+		this.enabled = undefined;
+		this.ngForm = undefined;
+	}
 
-            this.getRotas(this.busId)
-        }
-      }
-    )
-  }
+	goBack() {
+		this.router.navigateByUrl("/linhas");
+	}
 
-  getRotas(rotaId: number){
-    this.httpService.get('Busca Rotas', 'mslinha/linha/' + rotaId.toString() + '/rota').subscribe(
-      (response)=>{
-        response.forEach(rota => {
-          let rotaLocalizada: Rota ={
-            rotaId: rota.id,
-            latitude: rota.latitude,
-            longitude: rota.longitude,
-            ordem: rota.ordem
-          }
+	salvar() {
+		this.blockSave = true;
+		let json = this.createBodyBus();
+		if (this.validaDados()) {
+			this.httpService.post("linha", JSON.stringify(json), "mslinha/").subscribe((response) => {
+				this.blockSave = false;
+				this.poNotification.success("Novo ônibus cadastrada com sucesso!");
+				this.router.navigateByUrl("/linhas/" + response.id);
+			});
+		} else {
+			this.blockSave = false;
+		}
+	}
 
-          this.rotas.push(rotaLocalizada)
-        });
-      }
-    )
-  }
+	validaDados() {
+		let lOk: boolean = true;
 
-  cadastroRouteDetail: PoTableDetail = {
-    columns: [
-      { property: 'rotaId', label: 'Sequencial' },
-      { property: 'latitude', label: 'Latitude', type: 'string'},
-      { property: 'longitude', label: 'Longitude', type: 'string'},
-      { property: 'ordem', label: 'Ordem', type: 'string'},
-    ], 
-    typeHeader: 'top'
-  };
+		if (this.busCod == undefined) {
+			this.poNotification.error("Informe o código do Ônibus!");
+			lOk = false;
+		}
 
-  gridRouteCols: Array<PoTableColumn> = [
-    {
-      label: 'Route Id',
-      property: 'rotaId',
-      visible: true
-    },
-    {
-      label: 'Latitude',
-      property: 'latitude', 
-    },
-    {
-      label: 'Longitude',
-      property: 'longitude', 
-    },
-    {
-    label: 'Ordem',
-    property: 'ordem', 
-    },
-    { property: 'medicoes', label: 'Details', type: 'detail', detail: this.cadastroRouteDetail }
-  ]
-
-  createBodyLine(): BodyCadastro{
-    return {
-      busId : this.busId,
-      busCod: this.busCod,
-      enabled: this.enabled,
-      dataAtualizacao: new Date().toISOString(),
-    }
-  }
-
-  restore() {
-    this.busId = undefined;
-    this.busCod = undefined;
-    this.enabled = undefined;
-    this.ngForm = undefined;
-  }
-
-  goBack(){
-    this.router.navigateByUrl('/usuarios') //alterar
-  }
-
-  goAlterRoute(){
-    window.open(this.router.url + '/rota/')
-  }
-
-  salvar(){
-    this.blockSave = true
-    let json = this.createBodyLine()
-    if (this.validaDados()){
-      this.httpService.post('usuario', JSON.stringify(json), 'med/').subscribe( //alterar aqui
-        response=>{ 
-          this.blockSave = false  
-          this.poNotification.success("Novo ônibus cadastrada com sucesso!")
-          this.router.navigateByUrl('/linhas/' + response.id)
-        }
-      )
-    } else {
-      this.blockSave = false
-    }
-  }
-
-  validaDados(){
-    let lOk: boolean = true
-    if (this.busId == undefined){
-      this.poNotification.error("Informe um código do Ônibus!")
-      lOk = false;
-    }
-
-    if (this.busCod == undefined){
-      this.poNotification.error("Informe o código do Ônibus!")
-      lOk = false;
-    }
-
-    return lOk
-  }
+		return lOk;
+	}
 }
 
 interface BodyCadastro {
-  busId: number,
-  busCod: string,
-  enabled: boolean,
-  dataAtualizacao: string
+	codigo: string;
+	ativo: boolean;
 }
-
