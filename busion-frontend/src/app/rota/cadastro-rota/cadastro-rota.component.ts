@@ -16,13 +16,13 @@ export class CadastroRotaComponent implements OnInit {
   latitude: number
   longitude: number
   ordem: number
-  codigo: number
   enabled: boolean = true
   onibus: Array<Onibus>
 
   ngForm: any;
   blockSave: boolean = false
   tipoOp: string;
+  lineId: number;
 
   constructor(private httpService: HttpService, 
     private poNotification: PoNotificationService,
@@ -33,30 +33,30 @@ export class CadastroRotaComponent implements OnInit {
 
   ngOnInit(): void {
     this.restore();
-    let rotaId = this.route.snapshot.paramMap.get("rotaId");
+    let rotaId = this.route.snapshot.paramMap.get("idRota");
+    let lineId = this.route.snapshot.paramMap.get("idLinha");
     this.tipoOp = this.route.snapshot.data['opRoute']
 
     if (rotaId != null){
       this.rotaId = parseInt(rotaId)
-      this.getRotas(this.rotaId)
+      this.lineId = parseInt(lineId)
+      this.getRotas(this.rotaId, this.lineId)
     } else {
       this.initDadosRoute()
     }
   }
 
   initDadosRoute(){
-    this.codigo = 123
     this.enabled = true
   }
 
-  getRotas(rotaId: number){
+  getRotas(rotaId: number, lineId: number){
     this.httpService.get('linha/' + lineId, 'mslinha/' + rotaId).subscribe(
       (response)=>{
         let routeLocalizada = response
         if (routeLocalizada == undefined){
           this.poNotification.error("Não foi possível cadastrar com sucesso!")
         } else {
-            this.codigo = routeLocalizada.codigo
             this.enabled = routeLocalizada.ativo
         }
       }
@@ -68,7 +68,6 @@ export class CadastroRotaComponent implements OnInit {
       latitude: this.latitude,
       longitude: this.longitude,
       ordem: this.ordem,
-      codigo: this.codigo,
       ativo: this.enabled,
     }
   }
@@ -78,7 +77,6 @@ export class CadastroRotaComponent implements OnInit {
     this.latitude = undefined;
     this.longitude = undefined;
     this.ordem = undefined;
-    this.codigo = undefined;
     this.enabled = undefined;
     this.ngForm = undefined;
   }
@@ -107,7 +105,7 @@ export class CadastroRotaComponent implements OnInit {
     let lOk: boolean = true
 
     if (this.rotaId == undefined){
-      this.poNotification.error("Informe o código da Rota!")
+      this.poNotification.error("Informe o id da Rota!")
       lOk = false;
     }
 
@@ -119,6 +117,5 @@ interface BodyCadastro {
   latitude: number,
   longitude: number,
   ordem: number,
-  codigo: number,
   ativo: boolean,
 }

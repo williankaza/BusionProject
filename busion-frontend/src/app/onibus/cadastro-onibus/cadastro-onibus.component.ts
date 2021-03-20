@@ -20,6 +20,7 @@ export class CadastroOnibusComponent implements OnInit {
   ngForm: any;
   blockSave: boolean = false
   tipoOp: string;
+  lineId: number;
 
   constructor(private httpService: HttpService, 
     private poNotification: PoNotificationService,
@@ -30,12 +31,14 @@ export class CadastroOnibusComponent implements OnInit {
 
   ngOnInit(): void {
     this.restore();
-    let busId = this.route.snapshot.paramMap.get("idBus");
+    let busId = this.route.snapshot.paramMap.get("idOnibus");
+    let lineId = this.route.snapshot.paramMap.get("idLinha");
     this.tipoOp = this.route.snapshot.data['opBus']
 
     if (busId != null){
       this.busId = parseInt(busId)
-      this.getBus(this.busId)
+      this.lineId = parseInt(lineId)
+      this.getBus(this.busId, this.lineId)
     } else {
       this.initDadosBus()
     }
