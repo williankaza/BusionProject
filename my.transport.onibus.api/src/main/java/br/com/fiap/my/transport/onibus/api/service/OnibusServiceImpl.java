@@ -5,6 +5,7 @@ import br.com.fiap.my.transport.onibus.api.dto.OnibusCreateUpdateDTO;
 import br.com.fiap.my.transport.onibus.api.dto.OnibusDTO;
 import br.com.fiap.my.transport.onibus.api.entity.Linha;
 import br.com.fiap.my.transport.onibus.api.entity.Onibus;
+import br.com.fiap.my.transport.onibus.api.repository.LinhaRepository;
 import br.com.fiap.my.transport.onibus.api.repository.OnibusRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,17 +18,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class OnibusServiceImpl implements OnibusService {
-    public OnibusRepository onibusRepository;
-    public LinhaService linhaService;
+    private OnibusRepository onibusRepository;
+    private LinhaRepository linhaRepository;
+    private LinhaService linhaService;
 
-    public OnibusServiceImpl(OnibusRepository onibusRepository, LinhaService linhaService){
+    public OnibusServiceImpl(OnibusRepository onibusRepository, LinhaService linhaService, LinhaRepository linhaRepository){
         this.onibusRepository = onibusRepository;
+        this.linhaRepository = linhaRepository;
         this.linhaService = linhaService;
     }
 
     @Override
     public OnibusDTO create(Long idLinha, OnibusCreateUpdateDTO onibusCreateUpdateDTO) {
-        Linha linhaExistente = this.linhaService.findLinhaById(idLinha);
+        Linha linhaExistente = this.linhaRepository.findById(idLinha).orElse(null);
+
         Onibus novoOnibus = new Onibus(linhaExistente);
         novoOnibus.setCodigo( onibusCreateUpdateDTO.getCodigo() );
         novoOnibus.setAtivo( onibusCreateUpdateDTO.isAtivo() );
@@ -59,11 +63,9 @@ public class OnibusServiceImpl implements OnibusService {
 
     @Override
     public List<OnibusDTO> findAllByLinha(Long idLinha) {
-        return this.onibusRepository
-                .findAll()
+        return this.onibusRepository.buscaOnibusPorLinha(idLinha)
                 .stream()
-                .filter( onibus -> onibus.isAtivo() &&
-                         onibus.getLinha().getId() == idLinha)
+                .filter( onibus -> onibus.isAtivo())
                 .map( onibus -> new OnibusDTO(onibus) )
                 .collect( Collectors.toList() );
     }

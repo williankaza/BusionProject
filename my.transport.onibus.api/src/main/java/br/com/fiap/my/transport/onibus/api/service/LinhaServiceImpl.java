@@ -78,10 +78,11 @@ public class LinhaServiceImpl implements LinhaService {
     @Override
     public Linha findLinhaById(Long id){
         return this.linhaRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
     }
 
-    private Linha findLinhaByCodigo(String codigo){
+    public Linha findLinhaByCodigo(String codigo){
         Linha linhaExistente = this.linhaRepository
                 .findAllByCodigo(codigo)
                 .orElse(null);
