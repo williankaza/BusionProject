@@ -35,7 +35,8 @@ public class LinhaServiceImpl implements LinhaService {
         novaLinha.setCodigo(linhaCreateUpdateDTO.getCodigoLinha());
         novaLinha.setAtivo(linhaCreateUpdateDTO.isAtivo());
 
-        return new LinhaDTO(this.linhaRepository.save(novaLinha));
+        Linha linhaCriada = this.linhaRepository.save(novaLinha);
+        return new LinhaDTO(linhaCriada);
 
     }
 

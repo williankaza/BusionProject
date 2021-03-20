@@ -32,6 +32,7 @@ public class PosicaoController {
     }
 
     @DeleteMapping("{idPosicao}")
+    @ResponseStatus( HttpStatus.NO_CONTENT )
     public void delete(@PathVariable Long idPosicao){
         this.posicaoService.delete(idPosicao);
     }

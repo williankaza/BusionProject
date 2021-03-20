@@ -38,6 +38,7 @@ public class OnibusController {
     }
 
     @DeleteMapping("{idOnibus}")
+    @ResponseStatus( HttpStatus.NO_CONTENT )
     public void delete(@PathVariable Long idLinha, @PathVariable Long idOnibus){
         this.onibusService.delete(idOnibus);
     }

@@ -32,7 +32,8 @@ public class RotaController {
         return this.rotaService.update( idRota, rotaCreateUpdateDTO );
     }
 
-    @DeleteMapping("")
+    @DeleteMapping("{idRota}")
+    @ResponseStatus( HttpStatus.NO_CONTENT )
     public void delete(@PathVariable Long idRota){
         this.rotaService.delete(idRota);
     }

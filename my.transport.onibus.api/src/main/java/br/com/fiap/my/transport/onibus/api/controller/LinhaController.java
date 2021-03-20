@@ -20,6 +20,7 @@ public class LinhaController {
 
     @PostMapping
     @ResponseStatus( HttpStatus.CREATED )
+    @ResponseBody()
     public LinhaDTO create(@RequestBody LinhaCreateUpdateDTO linhaCreateUpdateDTO){
         return linhaService.create(linhaCreateUpdateDTO);
     }
@@ -31,6 +32,7 @@ public class LinhaController {
     }
 
     @DeleteMapping("{idLinha}")
+    @ResponseStatus( HttpStatus.NO_CONTENT )
     public void delete(@PathVariable Long idLinha){
         linhaService.delete(idLinha);
     }
