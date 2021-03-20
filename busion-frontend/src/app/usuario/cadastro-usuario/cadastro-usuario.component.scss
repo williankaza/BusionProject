@@ -1,43 +1,44 @@
-.bodyCadastro{
-    margin-left: -19%;
-    margin-top: 5%;
+.bodyCadastro {
+	margin-left: -19%;
+	margin-top: 5%;
 }
 
-.template{
-    color: #546569;
+.template {
+	color: #546569;
 }
 
-.po-font-title{
-    width: 100%; 
-    height: 450px; 
+.po-font-title {
+	width: 100%;
+	height: 450px;
 }
 
-
-:host ::ng-deep .po-button{
-    background-color: #726EFF;
-    color: white;
-    border: white;
-    border-radius: 10px;
+:host ::ng-deep .po-button {
+	background-color: #726eff;
+	color: white;
+	border: white;
+	border-radius: 10px;
 }
 
-:host ::ng-deep .btnDisabled  button.po-button:hover{
-    opacity: 0.9;
+:host ::ng-deep .btnDisabled button.po-button:hover {
+	opacity: 0.9;
 }
 
-:host ::ng-deep .btnEnabled  button.po-button:hover{
-    opacity: 0.9;
+:host ::ng-deep .btnEnabled button.po-button:hover {
+	opacity: 0.9;
 }
 
 :host ::ng-deep button.po-button.po-text-ellipsis.po-button-primary:disabled {
-    background-color: #B4BDC8;
-    color: white;
-    font-weight: 400;
+	background-color: #b4bdc8;
+	color: white;
+	font-weight: 400;
 }
 
-:host ::ng-deep .po-pt-2.po-row{
-    font-weight: bold;
+:host ::ng-deep .po-pt-2.po-row {
+	font-weight: bold;
 }
 
-:host ::ng-deep template.po-offset-xl-6.po-offset-lg-6.po-offset-sm-6.po-offset-md-6.po-lg-6.po-md-6.po-sm-6.po-pull-right.po-pb-2.po-pr-0.po-pl-0 {
-    margin-right: auto;
+:host
+	::ng-deep
+	template.po-offset-xl-6.po-offset-lg-6.po-offset-sm-6.po-offset-md-6.po-lg-6.po-md-6.po-sm-6.po-pull-right.po-pb-2.po-pr-0.po-pl-0 {
+	margin-right: auto;
 }
