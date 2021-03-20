@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
-import { PoNotificationService } from '@po-ui/ng-components';
+import { PoNotificationService, PoTableColumn, PoTableDetail } from '@po-ui/ng-components';
 import { GenericsLines, Onibus, Rota } from 'src/app/core/generics';
 import { HttpService } from 'src/app/services/http.service';
 
@@ -13,7 +13,7 @@ import { HttpService } from 'src/app/services/http.service';
 export class CadastroLinhaComponent implements OnInit {
 
   lineId: number
-  lineCod: number
+  lineCod: string
   enabled: boolean = true
   onibus: Array<Onibus>
   rotas: Array<Rota>
@@ -31,7 +31,7 @@ export class CadastroLinhaComponent implements OnInit {
 
   ngOnInit(): void {
     this.restore();
-    let lineId = this.route.snapshot.paramMap.get("idLinha"); //alterar
+    let lineId = this.route.snapshot.paramMap.get("idLinha");
     this.tipoOp = this.route.snapshot.data['opLinha']
 
     if (lineId != null){
@@ -43,10 +43,8 @@ export class CadastroLinhaComponent implements OnInit {
   }
 
   initDadosLines(){
-    this.lineCod = 123
+    this.lineCod = '123'
     this.enabled = true
-    //this.onibus = 
-    //this.rotas = 
   }
 
   getLine(lineId: number){
@@ -54,7 +52,7 @@ export class CadastroLinhaComponent implements OnInit {
       (response)=>{
         let linhaLocalizada = response
         if (linhaLocalizada == undefined){
-          console.log('deu ruim')
+          this.poNotification.error("Não foi possível cadastrar com sucesso!")
         } else {
             this.lineCod = linhaLocalizada.lineCod
             this.enabled = linhaLocalizada.enabled
@@ -82,6 +80,32 @@ export class CadastroLinhaComponent implements OnInit {
     )
   }
 
+  cadastroBusDetail: PoTableDetail = {
+    columns: [
+      { property: 'busId', label: 'Sequencial' },
+      { property: 'busCod', label: 'Line Cod', type: 'string'},
+      { property: 'enabled', label: 'Ativo', type: 'boolean' },
+    ], 
+    typeHeader: 'top'
+  };
+
+  gridBusCols: Array<PoTableColumn> = [
+    {
+      label: 'Bus Id',
+      property: 'busId',
+      visible: true
+    },
+    {
+      label: 'Bus Cod',
+      property: 'busCod', 
+    },
+    {
+      label: 'Active',
+      property: 'enabled', 
+    },
+    { property: 'medicoes', label: 'Details', type: 'detail', detail: this.cadastroBusDetail }
+  ]
+
   getRotas(lineId: number){
     this.httpService.get('Busca Rotas', 'mslinha/linha/' + lineId.toString() + '/rota').subscribe(
       (response)=>{
@@ -99,13 +123,43 @@ export class CadastroLinhaComponent implements OnInit {
     )
   }
 
+  cadastroRouteDetail: PoTableDetail = {
+    columns: [
+      { property: 'rotaId', label: 'Sequencial' },
+      { property: 'latitude', label: 'Latitude', type: 'string'},
+      { property: 'longitude', label: 'Longitude', type: 'string'},
+      { property: 'ordem', label: 'Ordem', type: 'string'},
+    ], 
+    typeHeader: 'top'
+  };
+
+  gridRouteCols: Array<PoTableColumn> = [
+    {
+      label: 'Route Id',
+      property: 'rotaId',
+      visible: true
+    },
+    {
+      label: 'Latitude',
+      property: 'latitude', 
+    },
+    {
+      label: 'Longitude',
+      property: 'longitude', 
+    },
+    {
+    label: 'Ordem',
+    property: 'ordem', 
+    },
+    { property: 'medicoes', label: 'Details', type: 'detail', detail: this.cadastroRouteDetail }
+  ]
+
+
   createBodyLine(): BodyCadastro{
     return {
       lineId : this.lineId,
       lineCod: this.lineCod,
       enabled: this.enabled,
-      //onibus: this.onibus,
-      //this.rotas = undefined;
       dataAtualizacao: new Date().toISOString(),
     }
   }
@@ -114,13 +168,19 @@ export class CadastroLinhaComponent implements OnInit {
     this.lineId = undefined;
     this.lineCod = undefined;
     this.enabled = undefined;
-    //this.onibus = undefined;
-    //this.rotas = undefined;
     this.ngForm = undefined;
   }
 
   goBack(){
     this.router.navigateByUrl('/usuarios')
+  }
+
+  goAlterBus(){
+    window.open(this.router.url + '/onibus/')
+  }
+
+  goAlterRoute(){
+    window.open(this.router.url + '/rota/')
   }
 
   salvar(){
@@ -151,25 +211,14 @@ export class CadastroLinhaComponent implements OnInit {
       lOk = false;
     }
 
-    // if (this.onibus == undefined){
-    //   this.poNotification.error("Informe o ônibus da linha!")
-    //   lOk = false;
-    // }
-
-    // if (this.rotas == undefined){
-    //   this.poNotification.error("Informe a rota da Linha!")
-    //   lOk = false;
-    // }
-
     return lOk
   }
 }
 
 interface BodyCadastro {
   lineId?: number,
-  lineCod: number,
+  lineCod: string,
   enabled: boolean,
-  //onibus: number,
   dataAtualizacao: string
 }
 

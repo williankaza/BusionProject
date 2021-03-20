@@ -17,7 +17,6 @@ export interface Linha{
     lineId: number
     lineCod: number
     enabled: boolean
-    dataAtualizacao: string
 }
 
 export interface UltimoCadastroLines{
@@ -32,7 +31,6 @@ export interface UltimoCadastroBus{
     busCod: number
     enabled: boolean
     posicao: null
-    //linha: Array<Linha>
     dataAtualizacao: string
 }
 
