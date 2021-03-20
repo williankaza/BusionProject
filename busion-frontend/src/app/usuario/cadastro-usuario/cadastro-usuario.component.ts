@@ -13,10 +13,11 @@ import { Validators } from '@angular/forms';
 })
 export class CadastroUsuarioComponent implements OnInit {
 
-  userId: number
+  uid: number
   @Input() name: string
   email: string
-  @Input() birthDate: string | Date
+  senha: string
+  birthDate: Date = new Date()
   ngForm: any;
   blockSave: boolean = false
 
@@ -29,11 +30,11 @@ export class CadastroUsuarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.restore();
-    let userId = this.route.snapshot.paramMap.get("codUser");
+    let userId = this.route.snapshot.paramMap.get("uid");
 
-    if (userId != null){
-      this.userId = parseInt(userId)
-      this.getUser(this.userId)
+    if (userId != "novo"){
+      this.uid = parseInt(userId)
+      this.getUser(this.uid)
     } else {
       this.initDadosUsuario()
     }
@@ -42,41 +43,41 @@ export class CadastroUsuarioComponent implements OnInit {
   initDadosUsuario(){
     this.name = 'Teste'
     this.email = 'teste@teste.com.br'
-    this.birthDate = new Date(1995,11,17), Validators.required
+    this.senha = '1234'
+    this.birthDate = <any>new Date(), Validators.required
   }
 
-  getUser(userId: number){
-    this.httpService.get('user', '/user').subscribe( //alterar aqui
+  getUser(uid: number){
+    this.httpService.get('linha/' + uid, 'mslinha/').subscribe(
       (response)=>{
-        response.forEach(user => {
-          if (user.userId == this.userId){
-            let ultimoCadastro = Generics.getDadosUltimoCadastro(user.cadastros)
-
-            if (ultimoCadastro != undefined){
-              this.name = ultimoCadastro.name
-              this.email = ultimoCadastro.email
-              this.birthDate = ultimoCadastro.birthDate
-            }
-          }
-        });
+        let userLocalizado = response
+        if (userLocalizado == undefined){
+          this.poNotification.error("Não foi possível cadastrar com sucesso!")
+        } else {
+            this.uid = userLocalizado.uid
+            this.email = userLocalizado.email
+            this.senha = userLocalizado.senha
+            this.birthDate = userLocalizado.dataNascimento
+        }
       }
     )
   }
 
   createBodyUser(): BodyCadastro{
     return {
-      userId : this.userId,
+      uid : this.uid,
       name: this.name,
       email: this.email,
-      birthDate: this.birthDate,
-      dataAtualizacao: new Date().toISOString(),
+      senha: this.senha,
+      dataNascimento: new Date(),
     }
   }
 
   restore() {
-    this.userId = undefined;
+    this.uid = undefined;
     this.name = undefined;
     this.email = undefined;
+    this.senha = undefined;
     this.birthDate = undefined;
     this.ngForm = undefined;
   }
@@ -93,6 +94,7 @@ export class CadastroUsuarioComponent implements OnInit {
         response=>{ 
           this.blockSave = false  
           this.poNotification.success("Novo usuário cadastrado com sucesso!")
+          this.router.navigateByUrl('/usuario/' + response.id)
         }
       )
     } else {
@@ -102,10 +104,6 @@ export class CadastroUsuarioComponent implements OnInit {
 
   validaDados(){
     let lOk: boolean = true
-    if (this.userId == undefined){
-      this.poNotification.error("Informe um código do Usuário!")
-      lOk = false;
-    }
 
     if (this.name == undefined){
       this.poNotification.error("Informe o nome do Usuário!")
@@ -114,6 +112,11 @@ export class CadastroUsuarioComponent implements OnInit {
 
     if (this.email == undefined){
       this.poNotification.error("Informe o email do Usuário!")
+      lOk = false;
+    }
+
+    if (this.senha == undefined){
+      this.poNotification.error("Informe a senha do Usuário!")
       lOk = false;
     }
 
@@ -128,9 +131,9 @@ export class CadastroUsuarioComponent implements OnInit {
 }
 
 interface BodyCadastro {
-  userId?: number,
+  uid?: number,
   name: string,
   email: string,
-  birthDate: string | Date,
-  dataAtualizacao: string
+  senha: string
+  dataNascimento: Date,
 }

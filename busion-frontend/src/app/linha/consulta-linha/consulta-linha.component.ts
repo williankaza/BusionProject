@@ -8,10 +8,7 @@ export interface Lines{
   id: number
   lineCod: number
   enabled: boolean
-  //onibus: Array<Onibus>
-  //rotas: Array<Rotas>
-  dataAtualizacao?: string
-  cadastros: Cadastro[]
+  actions: Array<string>
 }
 
 export interface Cadastro{
@@ -19,9 +16,8 @@ export interface Cadastro{
   lineId: number
   lineCod: number
   enabled: boolean
-  //onibus: Array<Onibus>
-  //rotas: Array<Rotas>
   dataAtualizacao?: string
+  
 }
 
 @Component({
@@ -44,8 +40,10 @@ export class ConsultaLinhaComponent implements OnInit {
   gridCols: Array<PoTableColumn> = [
     {
       label: 'Line Id',
-      property: 'lineId',
-      visible: true
+      property: 'id',
+      type: 'number',
+      visible: true,
+      width: '20%'
     },
     {
       label: 'Line Cod',
@@ -54,9 +52,32 @@ export class ConsultaLinhaComponent implements OnInit {
     {
       label: 'Active',
       property: 'enabled', 
+      type: 'boolean', 
+      boolean: {
+        trueLabel: 'Enabled', 
+        falseLabel: 'Disabled'
+      } 
     },
-    { property: 'medicoes', label: 'Details', type: 'detail', detail: this.cadastroDetail }
+    {
+      property: 'actions',
+      label: ' ',
+      type: 'icon',
+      icons: [
+        {
+          action: (row: Lines)=>{
+            this.goToCadastroAlterar(row.id)
+          },
+          icon: 'po-icon-export',
+          tooltip: 'edit',
+          value: 'edit'
+        }
+      ]
+    }
   ]
+
+  goToCadastroAlterar(lineId: number){
+    window.open(this.router.url + '/' + lineId)
+  }
 
   listLines: Array<Lines>
 
@@ -70,34 +91,27 @@ export class ConsultaLinhaComponent implements OnInit {
   }
 
   goToCadastro(){
-    window.open(this.router.url + '/cadastro-linhas/')
+    window.open(this.router.url + '/novo')
   }
 
   loadGrid(){
+/* 
+  [{"id":1,"codigoLinha":"1234","ativo":true,"onibus":[],"rotas":[]},{"id":2,"codigoLinha":"9121","ativo":true,"onibus":[],"rotas":[]}]
+*/
+
     this.httpService.restore();
-    this.httpService.get('drones', '/med').subscribe((response)=>{ //alterar
+    this.httpService.get('linha', 'mslinha/').subscribe((response)=>{
       response.forEach(line => {
-        let cadastros = line.casdastros
-        let lastCadastroIndex = Math.max(...cadastros.filter(cadastro => cadastro.enabled).map(cadastro => cadastro.lineId))-1
-        
-        if (lastCadastroIndex > -1){
-          let newLine: Lines = {
-            id: line.lineId,
-            lineCod: line.cadastros[lastCadastroIndex].lineCod,
-            enabled: line.cadastros[lastCadastroIndex].enabled,
-            cadastros: (<Array<any>>line.cadastros).filter(cadastro => cadastro.enabled).map((cadastro)=>{
-              return <Cadastro> {
-                lineCod: cadastro.lineCod,
-                enabled: cadastro.enabled,
-                dataAtualizacao: new Date(cadastro.dataAtualizacao).toLocaleString()
-              }            
-            })
-          }
-          
-          this.listLines.push(newLine)
+        let cadastros = line
+        let newLine: Lines = {
+          id: line.id,
+          lineCod: line.codigoLinha,
+          enabled: line.ativo,
+          actions: ['edit']
         }
-      });
-    })
-  }
-}
-  
+        
+        this.listLines.push(newLine)
+      }
+    );
+  });
+}}

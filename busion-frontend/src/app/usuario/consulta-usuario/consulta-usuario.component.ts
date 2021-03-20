@@ -72,7 +72,7 @@ export class ConsultaUsuarioComponent implements OnInit {
   }
 
   goToCadastro(){
-    window.open(this.router.url + '/cadastro-usuario/')
+    window.open(this.router.url + '/novo')
     //this.router.navigate(['./cadastro'], { relativeTo: this.route })
   }
 

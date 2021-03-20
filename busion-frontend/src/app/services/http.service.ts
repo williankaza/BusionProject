@@ -18,14 +18,14 @@ export class HttpService {
   }
 
   get(url: string, uri: string = httpUri){
-    return this.http.get<any>(httpUri + url, {
+    return this.http.get<any>(uri + url, {
       headers: this.headerParams,
       params: this.optionParams
     }).pipe(tap(), catchError(this.showError.bind(this)))
   }
 
   post(url: string, body: string, uri: string = httpUri){
-    return this.http.post<any>(httpUri + url, body, {
+    return this.http.post<any>(uri + url, body, {
       headers: this.headerParams,
       params: this.optionParams
     }).pipe(tap(), catchError(this.showError.bind(this)))

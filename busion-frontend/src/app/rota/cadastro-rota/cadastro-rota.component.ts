@@ -13,10 +13,10 @@ import { HttpService } from 'src/app/services/http.service';
 export class CadastroRotaComponent implements OnInit {
 
   rotaId: number
-  @Input() latitude: string
-  @Input() longitude: string
-  @Input() ordem: string
-  @Input() codigo: string
+  latitude: number
+  longitude: number
+  ordem: number
+  codigo: number
   enabled: boolean = true
   onibus: Array<Onibus>
 
@@ -45,77 +45,31 @@ export class CadastroRotaComponent implements OnInit {
   }
 
   initDadosRoute(){
-    this.codigo = '123'
+    this.codigo = 123
     this.enabled = true
   }
 
   getRotas(rotaId: number){
-    this.httpService.get('Busca Rota', 'mslinha/linha/' + rotaId.toString()).subscribe( //alterar aqui
+    this.httpService.get('linha/' + lineId, 'mslinha/' + rotaId).subscribe(
       (response)=>{
-        let onibusLocalizada = response
-        if (onibusLocalizada == undefined){
+        let routeLocalizada = response
+        if (routeLocalizada == undefined){
           this.poNotification.error("Não foi possível cadastrar com sucesso!")
         } else {
-            this.codigo = onibusLocalizada.codigo
-            this.enabled = onibusLocalizada.enabled
-
-            this.getRotas(this.rotaId)
+            this.codigo = routeLocalizada.codigo
+            this.enabled = routeLocalizada.ativo
         }
       }
     )
   }
 
-  getOnibus(lineId: number){
-    this.httpService.get('Busca Onibus', 'mslinha/linha/' + lineId.toString() + '/onibus').subscribe(
-      (response)=>{
-        response.forEach(onibus => {
-          let onibusLocalizado: Onibus ={
-            busId: onibus.id,
-            busCod: onibus.codigo,
-            enabled: onibus.ativo
-          }
-
-          this.onibus.push(onibusLocalizado)
-        });
-      }
-    )
-  }
-
-  cadastroBusDetail: PoTableDetail = {
-    columns: [
-      { property: 'busId', label: 'Sequencial' },
-      { property: 'busCod', label: 'Line Cod', type: 'string'},
-      { property: 'enabled', label: 'Ativo', type: 'boolean' },
-    ], 
-    typeHeader: 'top'
-  };
-
-  gridBusCols: Array<PoTableColumn> = [
-    {
-      label: 'Bus Id',
-      property: 'busId',
-      visible: true
-    },
-    {
-      label: 'Bus Cod',
-      property: 'busCod', 
-    },
-    {
-      label: 'Active',
-      property: 'enabled', 
-    },
-    { property: 'medicoes', label: 'Details', type: 'detail', detail: this.cadastroBusDetail }
-  ]
-
   createBodyRoute(): BodyCadastro{
     return {
-      rotaId : this.rotaId,
       latitude: this.latitude,
       longitude: this.longitude,
       ordem: this.ordem,
       codigo: this.codigo,
-      enabled: this.enabled,
-      dataAtualizacao: new Date().toISOString(),
+      ativo: this.enabled,
     }
   }
 
@@ -130,18 +84,14 @@ export class CadastroRotaComponent implements OnInit {
   }
 
   goBack(){
-    this.router.navigateByUrl('/usuarios') //alterar
-  }
-
-  goAlterOnibus(){
-    window.open(this.router.url + '/onibus/')
+    this.router.navigateByUrl('/linhas') //alterar
   }
 
   salvar(){
     this.blockSave = true
     let json = this.createBodyRoute()
     if (this.validaDados()){
-      this.httpService.post('usuario', JSON.stringify(json), 'med/').subscribe( //alterar aqui
+      this.httpService.post('linha', JSON.stringify(json), 'mslinha/').subscribe(
         response=>{ 
           this.blockSave = false  
           this.poNotification.success("Nova Rota cadastrada com sucesso!")
@@ -155,10 +105,6 @@ export class CadastroRotaComponent implements OnInit {
 
   validaDados(){
     let lOk: boolean = true
-    if (this.rotaId == undefined){
-      this.poNotification.error("Informe um código da Rota!")
-      lOk = false;
-    }
 
     if (this.rotaId == undefined){
       this.poNotification.error("Informe o código da Rota!")
@@ -170,11 +116,9 @@ export class CadastroRotaComponent implements OnInit {
 }
 
 interface BodyCadastro {
-  rotaId: number,
-  latitude: string,
-  longitude: string,
-  ordem: string,
-  codigo: string,
-  enabled: boolean,
-  dataAtualizacao: string
+  latitude: number,
+  longitude: number,
+  ordem: number,
+  codigo: number,
+  ativo: boolean,
 }

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AppComponent } from './app.component';
 import { CadastroLinhaComponent } from './linha/cadastro-linha/cadastro-linha.component';
 import { ConsultaLinhaComponent } from './linha/consulta-linha/consulta-linha.component';
 import { CadastroOnibusComponent } from './onibus/cadastro-onibus/cadastro-onibus.component';
@@ -12,6 +11,11 @@ const routes: Routes = [
   {
     path: '',
     children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'usuarios'
+      },
       {
         path: 'usuarios',
         children: [

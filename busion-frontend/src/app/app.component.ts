@@ -10,6 +10,7 @@ import { PoMenuItem } from '@po-ui/ng-components';
 })
 export class AppComponent {
   constructor(private router: Router){
+
   }
   readonly menus: Array<PoMenuItem> = [
     { label: 'Lines', action: ()=>this.goTo('linhas') },

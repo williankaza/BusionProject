@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { PoNotificationService, PoTableColumn, PoTableDetail } from '@po-ui/ng-components';
-import { GenericsLines, Onibus, Rota } from 'src/app/core/generics';
+import { Onibus, Rota } from 'src/app/core/generics';
 import { HttpService } from 'src/app/services/http.service';
 
 @Component({
@@ -48,14 +48,14 @@ export class CadastroLinhaComponent implements OnInit {
   }
 
   getLine(lineId: number){
-    this.httpService.get('Busca Linha', 'mslinha/linha/' + lineId.toString()).subscribe( //alterar aqui
+    this.httpService.get('linha/' + lineId, 'mslinha/').subscribe(
       (response)=>{
         let linhaLocalizada = response
         if (linhaLocalizada == undefined){
           this.poNotification.error("Não foi possível cadastrar com sucesso!")
         } else {
-            this.lineCod = linhaLocalizada.lineCod
-            this.enabled = linhaLocalizada.enabled
+            this.lineCod = linhaLocalizada.codigoLinha
+            this.enabled = linhaLocalizada.ativo
 
             this.getOnibus(this.lineId)
             this.getRotas(this.lineId)
@@ -65,7 +65,7 @@ export class CadastroLinhaComponent implements OnInit {
   }
 
   getOnibus(lineId: number){
-    this.httpService.get('Busca Onibus', 'mslinha/linha/' + lineId.toString() + '/onibus').subscribe(
+    this.httpService.get('linha/' + lineId + '/onibus', 'mslinha/').subscribe(
       (response)=>{
         response.forEach(onibus => {
           let onibusLocalizado: Onibus ={
@@ -107,7 +107,7 @@ export class CadastroLinhaComponent implements OnInit {
   ]
 
   getRotas(lineId: number){
-    this.httpService.get('Busca Rotas', 'mslinha/linha/' + lineId.toString() + '/rota').subscribe(
+    this.httpService.get('linha/' + lineId + '/rota', 'mslinha/').subscribe(
       (response)=>{
         response.forEach(rota => {
           let rotaLocalizada: Rota ={
@@ -154,13 +154,11 @@ export class CadastroLinhaComponent implements OnInit {
     { property: 'medicoes', label: 'Details', type: 'detail', detail: this.cadastroRouteDetail }
   ]
 
-
+ 
   createBodyLine(): BodyCadastro{
     return {
-      lineId : this.lineId,
-      lineCod: this.lineCod,
-      enabled: this.enabled,
-      dataAtualizacao: new Date().toISOString(),
+      codigoLinha: this.lineCod,
+      ativo: this.enabled
     }
   }
 
@@ -187,7 +185,7 @@ export class CadastroLinhaComponent implements OnInit {
     this.blockSave = true
     let json = this.createBodyLine()
     if (this.validaDados()){
-      this.httpService.post('usuario', JSON.stringify(json), 'med/').subscribe( //alterar aqui
+      this.httpService.post('onibus', JSON.stringify(json), 'mslinha/').subscribe(
         response=>{ 
           this.blockSave = false  
           this.poNotification.success("Nova linha cadastrada com sucesso!")
@@ -201,10 +199,6 @@ export class CadastroLinhaComponent implements OnInit {
 
   validaDados(){
     let lOk: boolean = true
-    if (this.lineId == undefined){
-      this.poNotification.error("Informe um código da Linha!")
-      lOk = false;
-    }
 
     if (this.lineCod == undefined){
       this.poNotification.error("Informe o Código da Linha!")
@@ -216,9 +210,7 @@ export class CadastroLinhaComponent implements OnInit {
 }
 
 interface BodyCadastro {
-  lineId?: number,
-  lineCod: string,
-  enabled: boolean,
-  dataAtualizacao: string
+  codigoLinha: string,
+  ativo: boolean
 }
 
