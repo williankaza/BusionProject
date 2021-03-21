@@ -169,4 +169,13 @@ public class FirebaseService {
         }
     }
 
+    public String getUserUidByEmail(String email) throws FirebaseAuthException {
+        try {
+            UserRecord userRecord = FirebaseAuth.getInstance().getUserByEmail(email);
+            return userRecord.getUid();
+        }catch(Exception e){
+            return null;
+        }
+    }
+
 }

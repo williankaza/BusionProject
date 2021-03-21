@@ -8,6 +8,7 @@ import com.mytransfport.UserServices.Service.FirebaseInitializer;
 import com.mytransfport.UserServices.Service.FirebaseService;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class FireBaseController {
     }
 
     @PostMapping("/createUser")
+    @ResponseStatus( HttpStatus.CREATED )
     public String createUser(@RequestBody CreateUsuarioDTO createUsuarioDTO) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();
         return fbs.createUser(createUsuarioDTO.getNome(), createUsuarioDTO.getEmail(), createUsuarioDTO.getSenha(),createUsuarioDTO.getDataNascimento());
@@ -48,6 +50,7 @@ public class FireBaseController {
         return fbs.editUser(updateUsuarioDTO.getUid(), updateUsuarioDTO.getNome(), updateUsuarioDTO.getEmail());
     }
     @DeleteMapping("/deleteUser")
+    @ResponseStatus( HttpStatus.NO_CONTENT )
     public String deleteUser(@RequestParam String uid) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();
         return fbs.deleteUser(uid);
