@@ -13,4 +13,8 @@ describe("HttpService", () => {
 	it("should be created", () => {
 		expect(service).toBeTruthy();
 	});
+
+	it("#getObservableValue perform a get on Usuário", (done: DoneFn)=>{
+		service.get("linha", "mslinha/")
+	})
 });
