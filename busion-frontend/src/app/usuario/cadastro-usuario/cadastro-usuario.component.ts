@@ -12,13 +12,14 @@ import { Validators } from "@angular/forms";
 	styleUrls: ["./cadastro-usuario.component.scss"],
 })
 export class CadastroUsuarioComponent implements OnInit {
-	uid: number;
+	userId: string;
 	@Input() name: string;
 	email: string;
 	senha: string;
 	birthDate: Date = new Date();
 	ngForm: any;
 	blockSave: boolean = false;
+	tipoOp: string; 
 
 	constructor(
 		private httpService: HttpService,
@@ -29,30 +30,28 @@ export class CadastroUsuarioComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.restore();
-		let userId = this.route.snapshot.paramMap.get("uid");
+		let userId = this.route.snapshot.paramMap.get("idUsuario");
+		this.tipoOp = this.route.snapshot.data["opUsuario"];
 
-		if (userId != "novo") {
-			this.uid = parseInt(userId);
-			this.getUser(this.uid);
+		if (userId != null) {
+			this.userId = userId;
+			this.getUser(this.userId);
 		} else {
 			this.initDadosUsuario();
 		}
 	}
 
 	initDadosUsuario() {
-		this.name = "Teste";
-		this.email = "teste@teste.com.br";
-		this.senha = "1234";
-		(this.birthDate = <any>new Date()), Validators.required;
+
 	}
 
-	getUser(uid: number) {
-		this.httpService.get("linha/" + uid, "msusuario/").subscribe((response) => {
+	getUser(uid: string) {
+		this.httpService.get("UserServices/" + uid, "msusuario/").subscribe((response) => {
 			let userLocalizado = response;
 			if (userLocalizado == undefined) {
 				this.poNotification.error("Não foi possível cadastrar com sucesso!");
 			} else {
-				this.uid = userLocalizado.uid;
+				this.name = userLocalizado.nome;
 				this.email = userLocalizado.email;
 				this.senha = userLocalizado.senha;
 				this.birthDate = userLocalizado.dataNascimento;
@@ -62,15 +61,15 @@ export class CadastroUsuarioComponent implements OnInit {
 
 	createBodyUser(): BodyCadastro {
 		return {
-			name: this.name,
+			nome: this.name,
 			email: this.email,
 			senha: this.senha,
-			dataNascimento: new Date(),
+			dataNascimento: new Date(this.birthDate).toJSON(),
 		};
 	}
 
 	restore() {
-		this.uid = undefined;
+		this.userId = undefined;
 		this.name = undefined;
 		this.email = undefined;
 		this.senha = undefined;
@@ -86,19 +85,35 @@ export class CadastroUsuarioComponent implements OnInit {
 		this.blockSave = true;
 		let json = this.createBodyUser();
 		if (this.validaDados()) {
-			this.httpService.post("usuario", JSON.stringify(json), "med/").subscribe(
-				//alterar aqui
-				(response) => {
-					this.blockSave = false;
-					this.poNotification.success("Novo usuário cadastrado com sucesso!");
-					this.router.navigateByUrl("/usuario/" + response.id);
-				}
-			);
+			if (this.tipoOp == "inclusao"){
+				this.postUsuario(json)
+			} else {
+				this.putUsuario(json)
+			}
 		} else {
 			this.blockSave = false;
 		}
 	}
 
+	postUsuario(body){
+		this.httpService.post("UserServices", JSON.stringify(body), "msusuario/").subscribe(
+			(response) => {
+				this.blockSave = false;
+				this.poNotification.success("Novo usuário cadastrado com sucesso!");
+				this.router.navigateByUrl("/usuarios/" + response.uid);
+			}
+		);
+	}
+
+	putUsuario(body){
+		this.httpService.put("UserServices/" + this.userId, JSON.stringify(body), "msusuario/").subscribe(
+			(response) => {
+				this.blockSave = false;
+				this.poNotification.success("Usuário alterado com sucesso!");
+				this.router.navigateByUrl("/usuarios/" + response.uid);
+			}
+		);
+	}
 	validaDados() {
 		let lOk: boolean = true;
 
@@ -112,7 +127,7 @@ export class CadastroUsuarioComponent implements OnInit {
 			lOk = false;
 		}
 
-		if (this.senha == undefined) {
+		if (this.tipoOp == "inclusao" && this.senha == undefined) {
 			this.poNotification.error("Informe a senha do Usuário!");
 			lOk = false;
 		}
@@ -127,8 +142,8 @@ export class CadastroUsuarioComponent implements OnInit {
 }
 
 interface BodyCadastro {
-	name: string;
+	nome: string;
 	email: string;
 	senha: string;
-	dataNascimento: Date;
+	dataNascimento: string;
 }

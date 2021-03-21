@@ -7,14 +7,14 @@
 		class="template po-offset-xl-6 po-offset-lg-6 po-offset-sm-6 po-offset-md-6 po-lg-6 po-md-6 po-sm-6 po-pull-right po-pb-2 po-pr-0 po-pl-0"
 	>
 		<div class="po-row">
-			<po-number
+			<po-input
 				p-disabled
 				#ctrl="ngModel"
 				class="po-sm-6"
 				name="label"
-				[(ngModel)]="uid"
+				[(ngModel)]="userId"
 				p-label="UserID"
-			></po-number>
+			></po-input>
 		</div>
 
 		<div class="po-row">
@@ -25,7 +25,7 @@
 			<po-email #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="email" p-label="Email"> </po-email>
 		</div>
 
-        <div class="po-row">
+        <div class="po-row" *ngIf="tipoOp == 'inclusao'">
 			<po-password #ctrl="ngModel" class="po-sm-6" name="label" [(ngModel)]="senha" p-label="Senha"> </po-password>
 		</div>
 

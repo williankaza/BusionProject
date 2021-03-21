@@ -32,7 +32,7 @@ export class CadastroOnibusComponent implements OnInit {
 		this.restore();
 		let busId = this.route.snapshot.paramMap.get("idOnibus");
 		this.lineId = parseInt(this.route.snapshot.paramMap.get("idLinha"));
-		this.tipoOp = this.route.snapshot.data["opBus"];
+		this.tipoOp = this.route.snapshot.data["opOnibus"];
 
 		if (busId != null) {
 			this.busId = parseInt(busId);

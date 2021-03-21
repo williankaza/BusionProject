@@ -22,7 +22,7 @@ public class FireBaseController {
     @Autowired
     FirebaseInitializer db;
 
-    @GetMapping("/getAllUsers")
+    @GetMapping("")
     public List<Usuario> getAllUsers(){
         FirebaseService fbs = new FirebaseService();
         try {
@@ -37,29 +37,33 @@ public class FireBaseController {
         return null;
     }
 
-    @PostMapping("/createUser")
+    @PostMapping("")
     @ResponseStatus( HttpStatus.CREATED )
-    public String createUser(@RequestBody CreateUsuarioDTO createUsuarioDTO) throws FirebaseAuthException {
+    public Usuario createUser(@RequestBody CreateUsuarioDTO createUsuarioDTO) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();
-        return fbs.createUser(createUsuarioDTO.getNome(), createUsuarioDTO.getEmail(), createUsuarioDTO.getSenha(),createUsuarioDTO.getDataNascimento());
+        return fbs.createUser(createUsuarioDTO.getNome(), createUsuarioDTO.getEmail(), createUsuarioDTO.getSenha(), createUsuarioDTO.getDataNascimento());
     }
 
-    @PostMapping("/editUser")
-    public String editUser(@RequestBody UpdateUsuarioDTO updateUsuarioDTO) throws FirebaseAuthException {
+    @PutMapping("{uidUsuario}")
+    public Usuario editUser(@PathVariable String uidUsuario,
+                           @RequestBody CreateUsuarioDTO createUsuarioDTO ) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();
-        return fbs.editUser(updateUsuarioDTO.getUid(), updateUsuarioDTO.getNome(), updateUsuarioDTO.getEmail());
+        return fbs.editUser(uidUsuario, createUsuarioDTO.getNome(), createUsuarioDTO.getEmail(), createUsuarioDTO.getDataNascimento());
     }
-    @DeleteMapping("/deleteUser")
+
+    @DeleteMapping("{uidUsuario}")
     @ResponseStatus( HttpStatus.NO_CONTENT )
-    public String deleteUser(@RequestParam String uid) throws FirebaseAuthException {
+    public String deleteUser(@PathVariable String uidUsuario) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();
-        return fbs.deleteUser(uid);
+        return fbs.deleteUser(uidUsuario);
     }
+
     @PostMapping("/createUserAPP")
     public String createUserAPP(@RequestBody CreateUsuarioAppDTO createUsuarioAppDTO) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();
         return fbs.createUserAPP(createUsuarioAppDTO.getUid(), createUsuarioAppDTO.getNome(), createUsuarioAppDTO.getEmail(),createUsuarioAppDTO.getDataNascimento());
     }
+
     @GetMapping("{uid}")
     public Usuario getUserById(@PathVariable String uid) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();

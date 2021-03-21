@@ -75,13 +75,12 @@ export class ConsultaUsuarioComponent implements OnInit {
 	}
 
 	goToCadastro() {
-		window.open(this.router.url + "/novo");
-		//this.router.navigate(['./cadastro'], { relativeTo: this.route })
+		this.router.navigateByUrl(this.router.url + "/novo")
 	}
 
 	loadGrid() {
 		this.httpService.restore();
-		this.httpService.get("UserServices/getAllUsers", "msusuario/").subscribe((response) => {
+		this.httpService.get("UserServices", "msusuario/").subscribe((response) => {
 			//alterar
 			response.forEach((user) => {
 				

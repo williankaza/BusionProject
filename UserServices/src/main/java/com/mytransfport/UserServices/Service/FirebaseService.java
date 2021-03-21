@@ -8,8 +8,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.cloud.FirestoreClient;
 import com.mytransfport.UserServices.Entity.Usuario;
 import com.mytransfport.UserServices.Utils.EmailValidate;
+import okhttp3.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,11 +26,11 @@ import java.util.concurrent.ExecutionException;
 public class FirebaseService {
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    public String createUser(String nome, String email, String senha, LocalDateTime dataNascimento) throws FirebaseAuthException {
+    public Usuario createUser(String nome, String email, String senha, LocalDateTime dataNascimento) throws FirebaseAuthException {
         if(!EmailValidate.isValidEmailAddress(email)){
-            return "Email invalido, por favor entre com email valido";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email invalido, por favor entre com email valido");
         }else if (senha.length()<6){
-            return "Por favor, digite uma senha com no minimo 6 caracteres";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email invalido, por favor entre com email valido");
         }else{
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
                     .setEmail(email)
@@ -36,8 +40,10 @@ public class FirebaseService {
             try {
                 UserRecord userRecord = auth.createUser(request);
                 Usuario usuario = new Usuario();
+
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 String strdataNascimento = dataNascimento.format(formatter);
+
                 usuario.setNome(nome);
                 usuario.setEmail(userRecord.getEmail());
                 usuario.setSenha("");
@@ -50,9 +56,9 @@ public class FirebaseService {
                 slackService.sendMessageToSlack("Usuário :" + usuario.getNome() + " criado com sucesso" +
                         "\nUID: " + usuario.getUid() +
                         "\nEmail: " + usuario.getEmail());
-                return "Usuário criado com sucesso: UID " + userRecord.getUid() + " Email: " + userRecord.getEmail();
+                return usuario;
             }catch (Exception e){
-                    return e.getMessage();
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, e.getMessage());
             }
         }
     }
@@ -60,8 +66,10 @@ public class FirebaseService {
 
             try {
                 Usuario usuario = new Usuario();
+
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 String strdataNascimento = dataNascimento.format(formatter);
+
                 usuario.setNome(nome);
                 usuario.setEmail(email);
                 usuario.setSenha("");
@@ -77,27 +85,31 @@ public class FirebaseService {
     }
 
 
-    public String editUser(String uid,String nome, String email) throws FirebaseAuthException {
+    public Usuario editUser(String uid, String nome, String email, LocalDateTime dataNascimento) throws FirebaseAuthException {
         if(!EmailValidate.isValidEmailAddress(email)){
-            return "Email invalido, por favor entre com email valido";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email invalido, por favor entre com email valido");
         }else if(uid.isEmpty()|| uid == null){
-            return "É necessário o envio do UID do usuário";
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email invalido, por favor entre com email valido");
         }else{
             try {
                 UserRecord.UpdateRequest request = new UserRecord.UpdateRequest(uid)
                         .setEmail(email)
                         .setDisabled(false);
 
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String strdataNascimento = dataNascimento.format(formatter);
+
                 Usuario usuario = new Usuario();
                 usuario.setNome(nome);
                 usuario.setEmail(email);
                 usuario.setUid(uid);
+                usuario.setDataNascimento(strdataNascimento);
 
                 UserRecord userRecord = FirebaseAuth.getInstance().updateUser(request);
                 writeUserName(usuario);
-                return "Usuário: " + nome + " editado atualizado com sucesso";
+                return usuario;
             }catch (Exception e){
-                return e.getMessage();
+                throw new ResponseStatusException(HttpStatus.BAD_GATEWAY, e.getMessage());
             }
 
         }
