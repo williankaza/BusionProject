@@ -35,6 +35,16 @@ export class HttpService {
 			.pipe(tap(), catchError(this.showError.bind(this)));
 	}
 
+	
+	put(url: string, body: string, uri: string = httpUri) {
+		return this.http
+			.put<any>(uri + url, body, {
+				headers: this.headerParams,
+				params: this.optionParams,
+			})
+			.pipe(tap(), catchError(this.showError.bind(this)));
+	}
+
 	showError(error: HttpErrorResponse) {
 		console.error("Erro na requisição: " + error);
 	}

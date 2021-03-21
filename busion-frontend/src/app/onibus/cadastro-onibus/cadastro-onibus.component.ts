@@ -31,12 +31,11 @@ export class CadastroOnibusComponent implements OnInit {
 	ngOnInit(): void {
 		this.restore();
 		let busId = this.route.snapshot.paramMap.get("idOnibus");
-		let lineId = this.route.snapshot.paramMap.get("idLinha");
+		this.lineId = parseInt(this.route.snapshot.paramMap.get("idLinha"));
 		this.tipoOp = this.route.snapshot.data["opBus"];
 
 		if (busId != null) {
 			this.busId = parseInt(busId);
-			this.lineId = parseInt(lineId);
 			this.getBus(this.busId, this.lineId);
 		} else {
 			this.initDadosBus();
@@ -44,12 +43,11 @@ export class CadastroOnibusComponent implements OnInit {
 	}
 
 	initDadosBus() {
-		this.busCod = "123";
 		this.enabled = true;
 	}
 
 	getBus(busId: number, lineId: number) {
-		this.httpService.get("linha/" + lineId, "mslinha/" + busId).subscribe((response) => {
+		this.httpService.get("linha/" + lineId + "/onibus/" + busId, "mslinha/").subscribe((response) => {
 			let onibusLocalizada = response;
 			if (onibusLocalizada == undefined) {
 				this.poNotification.error("Não foi possível cadastrar com sucesso!");
@@ -75,21 +73,37 @@ export class CadastroOnibusComponent implements OnInit {
 	}
 
 	goBack() {
-		this.router.navigateByUrl("/linhas");
+		this.router.navigateByUrl("/linhas/" + this.lineId);
 	}
 
 	salvar() {
 		this.blockSave = true;
 		let json = this.createBodyBus();
 		if (this.validaDados()) {
-			this.httpService.post("linha", JSON.stringify(json), "mslinha/").subscribe((response) => {
-				this.blockSave = false;
-				this.poNotification.success("Novo ônibus cadastrada com sucesso!");
-				this.router.navigateByUrl("/linhas/" + response.id);
-			});
+			if (this.tipoOp == "inclusao"){
+				this.postOnibus(json)
+			} else {
+				this.putOnibus(json)
+			}
 		} else {
 			this.blockSave = false;
 		}
+	}
+
+	putOnibus(body){
+		this.httpService.put("linha/" + this.lineId + '/onibus/' + this.busId, JSON.stringify(body), "mslinha/").subscribe((response) => {
+			this.blockSave = false;
+			this.poNotification.success("Ônibus alterado com sucesso!");
+			this.router.navigateByUrl("/linhas/" + this.lineId +"/onibus/"+ response.id);
+		});
+	}
+
+	postOnibus(body){
+		this.httpService.post("linha/" + this.lineId + '/onibus', JSON.stringify(body), "mslinha/").subscribe((response) => {
+			this.blockSave = false;
+			this.poNotification.success("Novo ônibus cadastrada com sucesso!");
+			this.router.navigateByUrl("/linhas/" + this.lineId +"/onibus/"+ response.id);
+		});
 	}
 
 	validaDados() {

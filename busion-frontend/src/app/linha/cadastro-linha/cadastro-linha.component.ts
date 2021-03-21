@@ -32,7 +32,8 @@ export class CadastroLinhaComponent implements OnInit {
 		this.restore();
 		let lineId = this.route.snapshot.paramMap.get("idLinha");
 		this.tipoOp = this.route.snapshot.data["opLinha"];
-
+		this.onibus = [];
+		this.rotas = [];
 		if (lineId != null) {
 			this.lineId = parseInt(lineId);
 			this.getLine(this.lineId);
@@ -42,7 +43,6 @@ export class CadastroLinhaComponent implements OnInit {
 	}
 
 	initDadosLines() {
-		this.lineCod = "123";
 		this.enabled = true;
 	}
 
@@ -68,21 +68,13 @@ export class CadastroLinhaComponent implements OnInit {
 					busId: onibus.id,
 					busCod: onibus.codigo,
 					enabled: onibus.ativo,
+					actions: ['edit']
 				};
 
 				this.onibus.push(onibusLocalizado);
 			});
 		});
 	}
-
-	cadastroBusDetail: PoTableDetail = {
-		columns: [
-			{ property: "busId", label: "Sequencial" },
-			{ property: "busCod", label: "Line Cod", type: "string" },
-			{ property: "enabled", label: "Ativo", type: "boolean" },
-		],
-		typeHeader: "top",
-	};
 
 	gridBusCols: Array<PoTableColumn> = [
 		{
@@ -98,8 +90,26 @@ export class CadastroLinhaComponent implements OnInit {
 			label: "Active",
 			property: "enabled",
 		},
-		{ property: "medicoes", label: "Details", type: "detail", detail: this.cadastroBusDetail },
+		{ 
+			property: "actions",
+			label: " ",
+			type: "icon",
+			icons: [
+				{
+					action: (row: Onibus) => {
+						this.goToOnibus(row.busId);
+					},
+					icon: "po-icon-export",
+					tooltip: "edit",
+					value: "edit",
+				},
+			]
+		}
 	];
+
+	goToOnibus(onibusId: number){
+		this.router.navigateByUrl(this.router.url + "/onibus/" + onibusId);
+	}
 
 	getRotas(lineId: number) {
 		this.httpService.get("linha/" + lineId + "/rota", "mslinha/").subscribe((response) => {
@@ -109,6 +119,7 @@ export class CadastroLinhaComponent implements OnInit {
 					latitude: rota.latitude,
 					longitude: rota.longitude,
 					ordem: rota.ordem,
+					actions: ['edit']
 				};
 
 				this.rotas.push(rotaLocalizada);
@@ -116,21 +127,13 @@ export class CadastroLinhaComponent implements OnInit {
 		});
 	}
 
-	cadastroRouteDetail: PoTableDetail = {
-		columns: [
-			{ property: "rotaId", label: "Sequencial" },
-			{ property: "latitude", label: "Latitude", type: "string" },
-			{ property: "longitude", label: "Longitude", type: "string" },
-			{ property: "ordem", label: "Ordem", type: "string" },
-		],
-		typeHeader: "top",
-	};
-
 	gridRouteCols: Array<PoTableColumn> = [
 		{
-			label: "Route Id",
+			label: "Id",
 			property: "rotaId",
 			visible: true,
+			type: 'number',
+			width: '10%'
 		},
 		{
 			label: "Latitude",
@@ -143,9 +146,28 @@ export class CadastroLinhaComponent implements OnInit {
 		{
 			label: "Ordem",
 			property: "ordem",
+			type: 'number'
 		},
-		{ property: "medicoes", label: "Details", type: "detail", detail: this.cadastroRouteDetail },
+		{ 
+			property: "actions",
+			label: " ",
+			type: "icon",
+			icons: [
+				{
+					action: (row: Rota) => {
+						this.goToRotas(row.rotaId);
+					},
+					icon: "po-icon-export",
+					tooltip: "edit",
+					value: "edit",
+				},
+			]
+		}
 	];
+
+	goToRotas(onibusId: number){
+		this.router.navigateByUrl(this.router.url + "/rota/" + onibusId);
+	}
 
 	createBodyLine(): BodyCadastro {
 		return {
@@ -165,27 +187,44 @@ export class CadastroLinhaComponent implements OnInit {
 		this.router.navigateByUrl("/usuarios");
 	}
 
-	goAlterBus() {
-		window.open(this.router.url + "/onibus/");
+	goNewBus() {
+		this.router.navigateByUrl(this.router.url + "/onibus");
 	}
 
-	goAlterRoute() {
-		window.open(this.router.url + "/rota/");
+	goNewRoute() {
+		this.router.navigateByUrl(this.router.url + "/rota");
 	}
 
 	salvar() {
 		this.blockSave = true;
 		let json = this.createBodyLine();
 		if (this.validaDados()) {
-			this.httpService.post("onibus", JSON.stringify(json), "mslinha/").subscribe((response) => {
-				this.blockSave = false;
-				this.poNotification.success("Nova linha cadastrada com sucesso!");
-				this.router.navigateByUrl("/linhas/" + response.id);
-			});
+			if (this.tipoOp == "inclusao"){
+				this.postLinha(json)
+			} else {
+				this.putLinha(json)
+			}
 		} else {
 			this.blockSave = false;
 		}
 	}
+
+	postLinha(body){
+		this.httpService.post("linha", JSON.stringify(body), "mslinha/").subscribe((response) => {
+			this.blockSave = false;
+			this.poNotification.success("Nova linha cadastrada com sucesso!");
+			this.router.navigateByUrl("/linhas/" + response.id);
+		});
+	}
+
+	putLinha(body){
+		this.httpService.put("linha/" + this.lineId, JSON.stringify(body), "mslinha/").subscribe((response) => {
+			this.blockSave = false;
+			this.poNotification.success("Linha alterada com sucesso!");
+			this.router.navigateByUrl("/linhas/" + response.id);
+		});
+	}
+
 
 	validaDados() {
 		let lOk: boolean = true;

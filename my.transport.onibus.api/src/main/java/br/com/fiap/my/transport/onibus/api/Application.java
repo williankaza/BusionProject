@@ -94,6 +94,7 @@ public class Application {/*
 		posicao1234001_03.setLongitude("-46.600872");
 		posicao1234001_03.setLotacaoAtual(18);
 
+
 		List<Posicao> lsPosicao1234001 =  new ArrayList<>();
 		lsPosicao1234001.add(posicao1234001_01);
 		lsPosicao1234001.add(posicao1234001_02);

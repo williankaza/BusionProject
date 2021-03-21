@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+	import { Component, OnInit } from "@angular/core";
 
 import { PoTableColumn, PoTableDetail } from "@po-ui/ng-components";
 import { Router, ActivatedRoute } from "@angular/router";

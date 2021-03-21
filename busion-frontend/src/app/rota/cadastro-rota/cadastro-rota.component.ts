@@ -33,12 +33,11 @@ export class CadastroRotaComponent implements OnInit {
 	ngOnInit(): void {
 		this.restore();
 		let rotaId = this.route.snapshot.paramMap.get("idRota");
-		let lineId = this.route.snapshot.paramMap.get("idLinha");
+		this.lineId = parseInt(this.route.snapshot.paramMap.get("idLinha"));
 		this.tipoOp = this.route.snapshot.data["opRoute"];
 
 		if (rotaId != null) {
 			this.rotaId = parseInt(rotaId);
-			this.lineId = parseInt(lineId);
 			this.getRotas(this.rotaId, this.lineId);
 		} else {
 			this.initDadosRoute();
@@ -50,11 +49,14 @@ export class CadastroRotaComponent implements OnInit {
 	}
 
 	getRotas(rotaId: number, lineId: number) {
-		this.httpService.get("linha/" + lineId, "mslinha/" + rotaId).subscribe((response) => {
+		this.httpService.get("linha/" + lineId + "/rota/" + rotaId, "mslinha/").subscribe((response) => {
 			let routeLocalizada = response;
 			if (routeLocalizada == undefined) {
 				this.poNotification.error("Não foi possível cadastrar com sucesso!");
 			} else {
+				this.latitude = routeLocalizada.latitude;
+				this.longitude = routeLocalizada.longitude;
+				this.ordem = routeLocalizada.ordem;
 				this.enabled = routeLocalizada.ativo;
 			}
 		});
@@ -79,21 +81,40 @@ export class CadastroRotaComponent implements OnInit {
 	}
 
 	goBack() {
-		this.router.navigateByUrl("/linhas"); //alterar
+		this.router.navigateByUrl("/linhas/" + this.lineId); //alterar
 	}
 
 	salvar() {
 		this.blockSave = true;
 		let json = this.createBodyRoute();
 		if (this.validaDados()) {
-			this.httpService.post("linha", JSON.stringify(json), "mslinha/").subscribe((response) => {
-				this.blockSave = false;
-				this.poNotification.success("Nova Rota cadastrada com sucesso!");
-				this.router.navigateByUrl("/linhas/" + response.id);
-			});
+			if (this.tipoOp == "inclusao"){
+				this.postRota(json);
+			} else {
+				this.putRota(json);
+			}
 		} else {
 			this.blockSave = false;
 		}
+	}
+
+	postRota(body){
+		
+		this.httpService.post("linha/" + this.lineId + "/rota", JSON.stringify(body), "mslinha/").subscribe((response) => {
+			this.blockSave = false;
+			this.poNotification.success("Nova Rota cadastrada com sucesso!");
+			this.router.navigateByUrl("/linhas/" + this.lineId + "/rotas" + response.id);
+		});
+	
+	}
+
+	putRota(body){
+		this.httpService.put("linha/" + this.lineId + "/rota/" + this.rotaId, JSON.stringify(body), "mslinha/").subscribe((response) => {
+			this.blockSave = false;
+			this.poNotification.success("Rota alterada com sucesso!");
+			this.router.navigateByUrl("/linhas/" + this.lineId + "/rotas" + response.id);
+		});
+	
 	}
 
 	validaDados() {
