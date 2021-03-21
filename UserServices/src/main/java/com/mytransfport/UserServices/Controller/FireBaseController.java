@@ -39,7 +39,7 @@ public class FireBaseController {
     @PostMapping("/createUser")
     public String createUser(@RequestBody CreateUsuarioDTO createUsuarioDTO) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();
-        return fbs.createUser(createUsuarioDTO.getNome(), createUsuarioDTO.getEmail(), createUsuarioDTO.getSenha());
+        return fbs.createUser(createUsuarioDTO.getNome(), createUsuarioDTO.getEmail(), createUsuarioDTO.getSenha(),createUsuarioDTO.getDataNascimento());
     }
 
     @PostMapping("/editUser")
@@ -55,7 +55,7 @@ public class FireBaseController {
     @PostMapping("/createUserAPP")
     public String createUserAPP(@RequestBody CreateUsuarioAppDTO createUsuarioAppDTO) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();
-        return fbs.createUserAPP(createUsuarioAppDTO.getUid(), createUsuarioAppDTO.getNome(), createUsuarioAppDTO.getEmail());
+        return fbs.createUserAPP(createUsuarioAppDTO.getUid(), createUsuarioAppDTO.getNome(), createUsuarioAppDTO.getEmail(),createUsuarioAppDTO.getDataNascimento());
     }
     @GetMapping("{uid}")
     public Usuario getUserById(@PathVariable String uid) throws FirebaseAuthException {

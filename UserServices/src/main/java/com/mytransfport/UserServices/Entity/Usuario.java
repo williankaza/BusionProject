@@ -1,11 +1,23 @@
 package com.mytransfport.UserServices.Entity;
 
+import java.time.LocalDateTime;
+
 public class Usuario {
     private String uid;
     private String nome;
     private String email;
     private String senha;
     private boolean emailVerificado;
+    private String dataNascimento;
+
+
+    public String getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(String dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
 
     public boolean getEmailVerificado() {
         return emailVerificado;
