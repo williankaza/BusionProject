@@ -95,7 +95,7 @@ public class FirebaseService {
 
                 UserRecord userRecord = FirebaseAuth.getInstance().updateUser(request);
                 writeUserName(usuario);
-                return "Usuário:" + nome + " editado atualizado com sucesso";
+                return "Usuário: " + nome + " editado atualizado com sucesso";
             }catch (Exception e){
                 return e.getMessage();
             }
@@ -108,11 +108,11 @@ public class FirebaseService {
         Firestore dbfirestore = FirestoreClient.getFirestore();
         try {
             Usuario usuario = new Usuario();
-            usuario.setNome(getUserByID(uid).getNome());
+            usuario.setNome(getUserInfo(uid).getNome());
             auth.deleteUser(uid);
             ApiFuture<WriteResult> writeResultApiFuture = dbfirestore.collection("users").document(uid).delete();
             SlackService slackService = new SlackService();
-            slackService.sendMessageToSlack("Usuário :" + usuario.getNome() + " deletado com sucesso");
+            slackService.sendMessageToSlack("Usuário: " + usuario.getNome() + " deletado com sucesso");
 
             return "Usuário deletado com sucesso";
         }catch (Exception e){
