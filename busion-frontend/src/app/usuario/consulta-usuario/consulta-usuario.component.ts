@@ -28,8 +28,8 @@ export class ConsultaUsuarioComponent implements OnInit {
 	gridCols: Array<PoTableColumn> = [
 		{
 			label: "User",
-			property: "userid",
-			visible: true,
+			property: "id",
+			visible: false,
 		},
 		{
 			label: "Name",
