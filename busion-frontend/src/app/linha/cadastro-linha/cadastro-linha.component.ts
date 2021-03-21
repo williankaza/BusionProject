@@ -68,7 +68,7 @@ export class CadastroLinhaComponent implements OnInit {
 					busId: onibus.id,
 					busCod: onibus.codigo,
 					enabled: onibus.ativo,
-					actions: ['edit']
+					actions: ["edit"],
 				};
 
 				this.onibus.push(onibusLocalizado);
@@ -90,7 +90,7 @@ export class CadastroLinhaComponent implements OnInit {
 			label: "Active",
 			property: "enabled",
 		},
-		{ 
+		{
 			property: "actions",
 			label: " ",
 			type: "icon",
@@ -103,11 +103,11 @@ export class CadastroLinhaComponent implements OnInit {
 					tooltip: "edit",
 					value: "edit",
 				},
-			]
-		}
+			],
+		},
 	];
 
-	goToOnibus(onibusId: number){
+	goToOnibus(onibusId: number) {
 		this.router.navigateByUrl(this.router.url + "/onibus/" + onibusId);
 	}
 
@@ -119,7 +119,7 @@ export class CadastroLinhaComponent implements OnInit {
 					latitude: rota.latitude,
 					longitude: rota.longitude,
 					ordem: rota.ordem,
-					actions: ['edit']
+					actions: ["edit"],
 				};
 
 				this.rotas.push(rotaLocalizada);
@@ -132,8 +132,8 @@ export class CadastroLinhaComponent implements OnInit {
 			label: "Id",
 			property: "rotaId",
 			visible: true,
-			type: 'number',
-			width: '10%'
+			type: "number",
+			width: "10%",
 		},
 		{
 			label: "Latitude",
@@ -146,9 +146,9 @@ export class CadastroLinhaComponent implements OnInit {
 		{
 			label: "Ordem",
 			property: "ordem",
-			type: 'number'
+			type: "number",
 		},
-		{ 
+		{
 			property: "actions",
 			label: " ",
 			type: "icon",
@@ -161,11 +161,11 @@ export class CadastroLinhaComponent implements OnInit {
 					tooltip: "edit",
 					value: "edit",
 				},
-			]
-		}
+			],
+		},
 	];
 
-	goToRotas(onibusId: number){
+	goToRotas(onibusId: number) {
 		this.router.navigateByUrl(this.router.url + "/rota/" + onibusId);
 	}
 
@@ -199,17 +199,17 @@ export class CadastroLinhaComponent implements OnInit {
 		this.blockSave = true;
 		let json = this.createBodyLine();
 		if (this.validaDados()) {
-			if (this.tipoOp == "inclusao"){
-				this.postLinha(json)
+			if (this.tipoOp == "inclusao") {
+				this.postLinha(json);
 			} else {
-				this.putLinha(json)
+				this.putLinha(json);
 			}
 		} else {
 			this.blockSave = false;
 		}
 	}
 
-	postLinha(body){
+	postLinha(body) {
 		this.httpService.post("linha", JSON.stringify(body), "mslinha/").subscribe((response) => {
 			this.blockSave = false;
 			this.poNotification.success("Nova linha cadastrada com sucesso!");
@@ -217,14 +217,13 @@ export class CadastroLinhaComponent implements OnInit {
 		});
 	}
 
-	putLinha(body){
+	putLinha(body) {
 		this.httpService.put("linha/" + this.lineId, JSON.stringify(body), "mslinha/").subscribe((response) => {
 			this.blockSave = false;
 			this.poNotification.success("Linha alterada com sucesso!");
 			this.router.navigateByUrl("/linhas/" + response.id);
 		});
 	}
-
 
 	validaDados() {
 		let lOk: boolean = true;

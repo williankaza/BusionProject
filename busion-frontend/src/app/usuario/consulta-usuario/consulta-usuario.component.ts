@@ -9,7 +9,7 @@ export interface Users {
 	name: string;
 	email?: string;
 	birthDate?: string | Date;
-	actions: Array<string>
+	actions: Array<string>;
 }
 
 export interface Cadastro {
@@ -43,7 +43,7 @@ export class ConsultaUsuarioComponent implements OnInit {
 			label: "Birth Date",
 			property: "birthDate",
 		},
-		{ 
+		{
 			property: "actions",
 			label: " ",
 			type: "icon",
@@ -56,12 +56,12 @@ export class ConsultaUsuarioComponent implements OnInit {
 					tooltip: "Alterar",
 					value: "edit",
 				},
-			]
-		}
+			],
+		},
 	];
 
-	goToUsuario(uidUsuario: string){
-		this.router.navigate([uidUsuario], { relativeTo: this.route })
+	goToUsuario(uidUsuario: string) {
+		this.router.navigate([uidUsuario], { relativeTo: this.route });
 	}
 
 	listUsers: Array<Users>;
@@ -75,7 +75,7 @@ export class ConsultaUsuarioComponent implements OnInit {
 	}
 
 	goToCadastro() {
-		this.router.navigateByUrl(this.router.url + "/novo")
+		this.router.navigateByUrl(this.router.url + "/novo");
 	}
 
 	loadGrid() {
@@ -83,13 +83,12 @@ export class ConsultaUsuarioComponent implements OnInit {
 		this.httpService.get("UserServices", "msusuario/").subscribe((response) => {
 			//alterar
 			response.forEach((user) => {
-				
 				let newUser: Users = {
 					id: user.uid,
 					name: user.nome,
 					email: user.email,
 					birthDate: user.dataNascimento,
-					actions: ['edit']
+					actions: ["edit"],
 				};
 
 				this.listUsers.push(newUser);

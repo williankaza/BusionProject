@@ -38,7 +38,7 @@ export interface Onibus {
 	busId: number;
 	busCod: string;
 	enabled: boolean;
-	actions: Array<string>
+	actions: Array<string>;
 }
 
 export interface Rota {
@@ -46,7 +46,7 @@ export interface Rota {
 	latitude: string;
 	longitude: string;
 	ordem: number;
-	actions: Array<string>
+	actions: Array<string>;
 }
 
 export class Generics {

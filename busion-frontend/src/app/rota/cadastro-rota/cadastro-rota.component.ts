@@ -88,7 +88,7 @@ export class CadastroRotaComponent implements OnInit {
 		this.blockSave = true;
 		let json = this.createBodyRoute();
 		if (this.validaDados()) {
-			if (this.tipoOp == "inclusao"){
+			if (this.tipoOp == "inclusao") {
 				this.postRota(json);
 			} else {
 				this.putRota(json);
@@ -98,28 +98,27 @@ export class CadastroRotaComponent implements OnInit {
 		}
 	}
 
-	postRota(body){
-		
+	postRota(body) {
 		this.httpService.post("linha/" + this.lineId + "/rota", JSON.stringify(body), "mslinha/").subscribe((response) => {
 			this.blockSave = false;
 			this.poNotification.success("Nova Rota cadastrada com sucesso!");
 			this.router.navigateByUrl("/linhas/" + this.lineId + "/rotas" + response.id);
 		});
-	
 	}
 
-	putRota(body){
-		this.httpService.put("linha/" + this.lineId + "/rota/" + this.rotaId, JSON.stringify(body), "mslinha/").subscribe((response) => {
-			this.blockSave = false;
-			this.poNotification.success("Rota alterada com sucesso!");
-			this.router.navigateByUrl("/linhas/" + this.lineId + "/rotas" + response.id);
-		});
-	
+	putRota(body) {
+		this.httpService
+			.put("linha/" + this.lineId + "/rota/" + this.rotaId, JSON.stringify(body), "mslinha/")
+			.subscribe((response) => {
+				this.blockSave = false;
+				this.poNotification.success("Rota alterada com sucesso!");
+				this.router.navigateByUrl("/linhas/" + this.lineId + "/rotas" + response.id);
+			});
 	}
 
 	validaDados() {
 		let lOk: boolean = true;
-	
+
 		if (this.latitude == undefined) {
 			this.poNotification.error("Informe a latitude da Rota!");
 			lOk = false;

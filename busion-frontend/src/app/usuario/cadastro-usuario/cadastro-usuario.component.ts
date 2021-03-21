@@ -19,7 +19,7 @@ export class CadastroUsuarioComponent implements OnInit {
 	birthDate: Date = new Date();
 	ngForm: any;
 	blockSave: boolean = false;
-	tipoOp: string; 
+	tipoOp: string;
 
 	constructor(
 		private httpService: HttpService,
@@ -41,9 +41,7 @@ export class CadastroUsuarioComponent implements OnInit {
 		}
 	}
 
-	initDadosUsuario() {
-
-	}
+	initDadosUsuario() {}
 
 	getUser(uid: string) {
 		this.httpService.get("UserServices/" + uid, "msusuario/").subscribe((response) => {
@@ -85,34 +83,30 @@ export class CadastroUsuarioComponent implements OnInit {
 		this.blockSave = true;
 		let json = this.createBodyUser();
 		if (this.validaDados()) {
-			if (this.tipoOp == "inclusao"){
-				this.postUsuario(json)
+			if (this.tipoOp == "inclusao") {
+				this.postUsuario(json);
 			} else {
-				this.putUsuario(json)
+				this.putUsuario(json);
 			}
 		} else {
 			this.blockSave = false;
 		}
 	}
 
-	postUsuario(body){
-		this.httpService.post("UserServices", JSON.stringify(body), "msusuario/").subscribe(
-			(response) => {
-				this.blockSave = false;
-				this.poNotification.success("Novo usuário cadastrado com sucesso!");
-				this.router.navigateByUrl("/usuarios/" + response.uid);
-			}
-		);
+	postUsuario(body) {
+		this.httpService.post("UserServices", JSON.stringify(body), "msusuario/").subscribe((response) => {
+			this.blockSave = false;
+			this.poNotification.success("Novo usuário cadastrado com sucesso!");
+			this.router.navigateByUrl("/usuarios/" + response.uid);
+		});
 	}
 
-	putUsuario(body){
-		this.httpService.put("UserServices/" + this.userId, JSON.stringify(body), "msusuario/").subscribe(
-			(response) => {
-				this.blockSave = false;
-				this.poNotification.success("Usuário alterado com sucesso!");
-				this.router.navigateByUrl("/usuarios/" + response.uid);
-			}
-		);
+	putUsuario(body) {
+		this.httpService.put("UserServices/" + this.userId, JSON.stringify(body), "msusuario/").subscribe((response) => {
+			this.blockSave = false;
+			this.poNotification.success("Usuário alterado com sucesso!");
+			this.router.navigateByUrl("/usuarios/" + response.uid);
+		});
 	}
 	validaDados() {
 		let lOk: boolean = true;
