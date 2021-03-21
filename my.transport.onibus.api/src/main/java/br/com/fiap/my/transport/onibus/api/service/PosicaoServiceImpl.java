@@ -28,6 +28,7 @@ public class PosicaoServiceImpl implements PosicaoService {
     @Override
     public PosicaoDTO create(Long idOnibus, PosicaoCreateUpdateDTO posicaoCreateUpdateDTO) {
         Onibus onibusExitente = this.onibusService.findOnibusById(idOnibus);
+
         Posicao novaPosicao = new Posicao(onibusExitente);
 
         novaPosicao.setDataAtualizacao( LocalDateTime.now() );
@@ -62,8 +63,7 @@ public class PosicaoServiceImpl implements PosicaoService {
 
     @Override
     public List<PosicaoDTO> findAllByOnibus(Long idOnibus) {
-        return this.posicaoRepository.findAll().stream()
-                .filter(posicao -> posicao.getOnibus().getId() == idOnibus)
+        return this.posicaoRepository.buscaPosicaoPorOnibus(idOnibus).stream()
                 .map( posicao -> new PosicaoDTO(posicao) )
                 .collect( Collectors.toList() );
     }

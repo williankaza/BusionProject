@@ -1,121 +1,116 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
-import { PoNotificationService, PoTableColumn, PoTableDetail } from '@po-ui/ng-components';
-import { Onibus } from 'src/app/core/generics';
-import { HttpService } from 'src/app/services/http.service';
+import { Component, OnInit, Input } from "@angular/core";
+import { Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
+import { PoNotificationService, PoTableColumn, PoTableDetail } from "@po-ui/ng-components";
+import { Onibus } from "src/app/core/generics";
+import { HttpService } from "src/app/services/http.service";
 
 @Component({
-  selector: 'app-cadastro-rota',
-  templateUrl: './cadastro-rota.component.html',
-  styleUrls: ['./cadastro-rota.component.scss']
+	selector: "app-cadastro-rota",
+	templateUrl: "./cadastro-rota.component.html",
+	styleUrls: ["./cadastro-rota.component.scss"],
 })
 export class CadastroRotaComponent implements OnInit {
+	rotaId: number;
+	latitude: number;
+	longitude: number;
+	ordem: number;
+	enabled: boolean = true;
+	onibus: Array<Onibus>;
 
-  rotaId: number
-  latitude: number
-  longitude: number
-  ordem: number
-  enabled: boolean = true
-  onibus: Array<Onibus>
+	ngForm: any;
+	blockSave: boolean = false;
+	tipoOp: string;
+	lineId: number;
 
-  ngForm: any;
-  blockSave: boolean = false
-  tipoOp: string;
-  lineId: number;
+	constructor(
+		private httpService: HttpService,
+		private poNotification: PoNotificationService,
+		private router: Router,
+		private route: ActivatedRoute
+	) {}
 
-  constructor(private httpService: HttpService, 
-    private poNotification: PoNotificationService,
-    private router: Router, 
-    private route: ActivatedRoute) { 
+	ngOnInit(): void {
+		this.restore();
+		let rotaId = this.route.snapshot.paramMap.get("idRota");
+		let lineId = this.route.snapshot.paramMap.get("idLinha");
+		this.tipoOp = this.route.snapshot.data["opRoute"];
 
-  }
+		if (rotaId != null) {
+			this.rotaId = parseInt(rotaId);
+			this.lineId = parseInt(lineId);
+			this.getRotas(this.rotaId, this.lineId);
+		} else {
+			this.initDadosRoute();
+		}
+	}
 
-  ngOnInit(): void {
-    this.restore();
-    let rotaId = this.route.snapshot.paramMap.get("idRota");
-    let lineId = this.route.snapshot.paramMap.get("idLinha");
-    this.tipoOp = this.route.snapshot.data['opRoute']
+	initDadosRoute() {
+		this.enabled = true;
+	}
 
-    if (rotaId != null){
-      this.rotaId = parseInt(rotaId)
-      this.lineId = parseInt(lineId)
-      this.getRotas(this.rotaId, this.lineId)
-    } else {
-      this.initDadosRoute()
-    }
-  }
+	getRotas(rotaId: number, lineId: number) {
+		this.httpService.get("linha/" + lineId, "mslinha/" + rotaId).subscribe((response) => {
+			let routeLocalizada = response;
+			if (routeLocalizada == undefined) {
+				this.poNotification.error("Não foi possível cadastrar com sucesso!");
+			} else {
+				this.enabled = routeLocalizada.ativo;
+			}
+		});
+	}
 
-  initDadosRoute(){
-    this.enabled = true
-  }
+	createBodyRoute(): BodyCadastro {
+		return {
+			latitude: this.latitude,
+			longitude: this.longitude,
+			ordem: this.ordem,
+			ativo: this.enabled,
+		};
+	}
 
-  getRotas(rotaId: number, lineId: number){
-    this.httpService.get('linha/' + lineId, 'mslinha/' + rotaId).subscribe(
-      (response)=>{
-        let routeLocalizada = response
-        if (routeLocalizada == undefined){
-          this.poNotification.error("Não foi possível cadastrar com sucesso!")
-        } else {
-            this.enabled = routeLocalizada.ativo
-        }
-      }
-    )
-  }
+	restore() {
+		this.rotaId = undefined;
+		this.latitude = undefined;
+		this.longitude = undefined;
+		this.ordem = undefined;
+		this.enabled = undefined;
+		this.ngForm = undefined;
+	}
 
-  createBodyRoute(): BodyCadastro{
-    return {
-      latitude: this.latitude,
-      longitude: this.longitude,
-      ordem: this.ordem,
-      ativo: this.enabled,
-    }
-  }
+	goBack() {
+		this.router.navigateByUrl("/linhas"); //alterar
+	}
 
-  restore() {
-    this.rotaId = undefined;
-    this.latitude = undefined;
-    this.longitude = undefined;
-    this.ordem = undefined;
-    this.enabled = undefined;
-    this.ngForm = undefined;
-  }
+	salvar() {
+		this.blockSave = true;
+		let json = this.createBodyRoute();
+		if (this.validaDados()) {
+			this.httpService.post("linha", JSON.stringify(json), "mslinha/").subscribe((response) => {
+				this.blockSave = false;
+				this.poNotification.success("Nova Rota cadastrada com sucesso!");
+				this.router.navigateByUrl("/linhas/" + response.id);
+			});
+		} else {
+			this.blockSave = false;
+		}
+	}
 
-  goBack(){
-    this.router.navigateByUrl('/linhas') //alterar
-  }
+	validaDados() {
+		let lOk: boolean = true;
 
-  salvar(){
-    this.blockSave = true
-    let json = this.createBodyRoute()
-    if (this.validaDados()){
-      this.httpService.post('linha', JSON.stringify(json), 'mslinha/').subscribe(
-        response=>{ 
-          this.blockSave = false  
-          this.poNotification.success("Nova Rota cadastrada com sucesso!")
-          this.router.navigateByUrl('/linhas/' + response.id)
-        }
-      )
-    } else {
-      this.blockSave = false
-    }
-  }
+		if (this.rotaId == undefined) {
+			this.poNotification.error("Informe o id da Rota!");
+			lOk = false;
+		}
 
-  validaDados(){
-    let lOk: boolean = true
-
-    if (this.rotaId == undefined){
-      this.poNotification.error("Informe o id da Rota!")
-      lOk = false;
-    }
-
-    return lOk
-  }
+		return lOk;
+	}
 }
 
 interface BodyCadastro {
-  latitude: number,
-  longitude: number,
-  ordem: number,
-  ativo: boolean,
+	latitude: number;
+	longitude: number;
+	ordem: number;
+	ativo: boolean;
 }
