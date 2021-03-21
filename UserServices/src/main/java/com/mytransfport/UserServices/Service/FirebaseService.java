@@ -10,17 +10,19 @@ import com.mytransfport.UserServices.Entity.Usuario;
 import com.mytransfport.UserServices.Utils.EmailValidate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Service
 public class FirebaseService {
     FirebaseAuth auth = FirebaseAuth.getInstance();
 
-
-
-    public String createUser(String nome,String email, String senha) throws FirebaseAuthException {
+    public String createUser(String nome, String email, String senha, LocalDateTime dataNascimento) throws FirebaseAuthException {
         if(!EmailValidate.isValidEmailAddress(email)){
             return "Email invalido, por favor entre com email valido";
         }else if (senha.length()<6){
@@ -34,12 +36,14 @@ public class FirebaseService {
             try {
                 UserRecord userRecord = auth.createUser(request);
                 Usuario usuario = new Usuario();
-
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String strdataNascimento = dataNascimento.format(formatter);
                 usuario.setNome(nome);
                 usuario.setEmail(userRecord.getEmail());
                 usuario.setSenha("");
                 usuario.setEmailVerificado(userRecord.isEmailVerified());
                 usuario.setUid(userRecord.getUid());
+                usuario.setDataNascimento(strdataNascimento);
 
                 writeUserName(usuario);
                 SlackService slackService = new SlackService();
@@ -52,16 +56,18 @@ public class FirebaseService {
             }
         }
     }
-    public String createUserAPP(String uid,String nome,String email)  {
+    public String createUserAPP(String uid,String nome,String email,LocalDateTime dataNascimento)  {
 
             try {
                 Usuario usuario = new Usuario();
-
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String strdataNascimento = dataNascimento.format(formatter);
                 usuario.setNome(nome);
                 usuario.setEmail(email);
                 usuario.setSenha("");
                 usuario.setEmailVerificado(true);
                 usuario.setUid(uid);
+                usuario.setDataNascimento(strdataNascimento);
                 writeUserName(usuario);
                 return "Usuário criado com sucesso";
 
@@ -102,7 +108,7 @@ public class FirebaseService {
         Firestore dbfirestore = FirestoreClient.getFirestore();
         try {
             Usuario usuario = new Usuario();
-            usuario = getUserByID(uid);
+            usuario.setNome(getUserByID(uid).getNome());
             auth.deleteUser(uid);
             ApiFuture<WriteResult> writeResultApiFuture = dbfirestore.collection("users").document(uid).delete();
             SlackService slackService = new SlackService();
@@ -124,18 +130,23 @@ public class FirebaseService {
             usuario.setUid(user.getUid());
             usuario.setEmailVerificado(user.isEmailVerified());
             usuario.setSenha(user.getPasswordHash());
-            usuario.setNome(getUserInfo(user.getUid()));
+            usuario.setNome(getUserInfo(user.getUid()).getNome());
+            usuario.setDataNascimento(getUserInfo(user.getUid()).getDataNascimento());
             listaUser.add(usuario);
         }
         return listaUser;
     }
-    public String getUserInfo(String uid) throws ExecutionException, InterruptedException {
+    public Usuario getUserInfo(String uid) throws ExecutionException, InterruptedException {
+        Usuario usuario = new Usuario();
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = dbFirestore.collection("users").document(uid);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
-
         DocumentSnapshot document   = future.get();
-        return document.getString("nome");
+
+        usuario.setNome(document.getString("nome"));
+        usuario.setDataNascimento(document.getString("dataNascimento"));
+
+        return usuario;
 
     }
     public void writeUserName(Usuario usuario){
@@ -150,8 +161,18 @@ public class FirebaseService {
             usuario.setEmail(userRecord.getEmail());
             usuario.setUid(userRecord.getUid());
             usuario.setEmailVerificado(userRecord.isEmailVerified());
-            usuario.setNome(getUserInfo(uid));
+            usuario.setNome(getUserInfo(uid).getNome());
+            usuario.setDataNascimento(getUserInfo(uid).getDataNascimento());
             return usuario;
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    public String getUserUidByEmail(String email) throws FirebaseAuthException {
+        try {
+            UserRecord userRecord = FirebaseAuth.getInstance().getUserByEmail(email);
+            return userRecord.getUid();
         }catch(Exception e){
             return null;
         }

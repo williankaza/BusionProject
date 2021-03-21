@@ -59,9 +59,8 @@ public class RotaServiceImpl implements RotaService {
 
     @Override
     public List<RotaDTO> findAllByLinha(Long idLinha) {
-        return this.rotaRepository.findAll().stream()
-                .filter(rota -> rota.isAtivo() &&
-                        rota.getLinha().getId() == idLinha)
+        return this.rotaRepository.buscaRotaPorLinha(idLinha).stream()
+                .filter(rota -> rota.isAtivo() )
                 .map( rota -> new RotaDTO(rota) )
                 .collect( Collectors.toList() );
     }

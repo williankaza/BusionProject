@@ -1,10 +1,21 @@
 package com.mytransfport.UserServices.DTO.Create;
 
+import java.time.LocalDateTime;
+
 public class CreateUsuarioDTO {
 
     private String nome;
     private String email;
     private String senha;
+    private LocalDateTime dataNascimento;
+
+    public LocalDateTime getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDateTime dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
 
     public String getNome() {
         return nome;
