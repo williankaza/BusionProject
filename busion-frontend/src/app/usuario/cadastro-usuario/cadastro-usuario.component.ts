@@ -62,7 +62,6 @@ export class CadastroUsuarioComponent implements OnInit {
 
 	createBodyUser(): BodyCadastro {
 		return {
-			uid: this.uid,
 			name: this.name,
 			email: this.email,
 			senha: this.senha,
@@ -128,7 +127,6 @@ export class CadastroUsuarioComponent implements OnInit {
 }
 
 interface BodyCadastro {
-	uid?: number;
 	name: string;
 	email: string;
 	senha: string;

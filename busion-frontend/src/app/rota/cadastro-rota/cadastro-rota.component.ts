@@ -34,7 +34,7 @@ export class CadastroRotaComponent implements OnInit {
 		this.restore();
 		let rotaId = this.route.snapshot.paramMap.get("idRota");
 		this.lineId = parseInt(this.route.snapshot.paramMap.get("idLinha"));
-		this.tipoOp = this.route.snapshot.data["opRoute"];
+		this.tipoOp = this.route.snapshot.data["opRota"];
 
 		if (rotaId != null) {
 			this.rotaId = parseInt(rotaId);
