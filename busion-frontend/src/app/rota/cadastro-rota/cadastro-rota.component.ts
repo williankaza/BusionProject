@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { Router } from "@angular/router";
 import { ActivatedRoute } from "@angular/router";
-import { PoNotificationService, PoTableColumn, PoTableDetail } from "@po-ui/ng-components";
+import { PoNotificationService } from "@po-ui/ng-components";
 import { Onibus } from "src/app/core/generics";
 import { HttpService } from "src/app/services/http.service";
 
@@ -119,9 +119,19 @@ export class CadastroRotaComponent implements OnInit {
 
 	validaDados() {
 		let lOk: boolean = true;
+	
+		if (this.latitude == undefined) {
+			this.poNotification.error("Informe a latitude da Rota!");
+			lOk = false;
+		}
 
-		if (this.rotaId == undefined) {
-			this.poNotification.error("Informe o id da Rota!");
+		if (this.longitude == undefined) {
+			this.poNotification.error("Informe a longitude da Rota!");
+			lOk = false;
+		}
+
+		if (this.ordem == undefined) {
+			this.poNotification.error("Informe a ordem da Rota!");
 			lOk = false;
 		}
 
