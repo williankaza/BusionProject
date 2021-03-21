@@ -44,6 +44,20 @@ class UserServicesApplicationTests {
 	private FirebaseService firebaseService;
 
 	@Test
+	void FirebaseCaseCreate() throws Exception {
+		CreateUsuarioDTO createUsuarioDTO = new CreateUsuarioDTO();
+		createUsuarioDTO.setNome("Teste JUNIT Create");
+		createUsuarioDTO.setEmail("junit@junit.com.br");
+		createUsuarioDTO.setSenha("123456");
+		createUsuarioDTO.setDataNascimento(LocalDateTime.now());
+		mockMvc.perform(post("/UserServices/createUser")
+				.contentType("application/json")
+				.content(objectMapper.writeValueAsString(createUsuarioDTO)))
+				.andExpect(status().isCreated());
+		Thread.sleep(5000);
+	}
+
+	@Test
 	void FirebaseCaseGetAll() throws Exception {
 		MvcResult resultActions = this.mockMvc
 				.perform(get("/UserServices/getAllUsers")
@@ -72,20 +86,6 @@ class UserServicesApplicationTests {
 						.content(objectMapper.writeValueAsString(updateUsuarioDTO)))
 				.andExpect(status().isOk());
 	}
-
-	@Test
-	void FirebaseCaseCreate() throws Exception {
-		CreateUsuarioDTO createUsuarioDTO = new CreateUsuarioDTO();
-		createUsuarioDTO.setNome("Teste JUNIT Create");
-		createUsuarioDTO.setEmail("junit@junit.com.br");
-		createUsuarioDTO.setSenha("123456");
-		createUsuarioDTO.setDataNascimento(LocalDateTime.now());
-		mockMvc.perform(post("/UserServices/createUser")
-				.contentType("application/json")
-				.content(objectMapper.writeValueAsString(createUsuarioDTO)))
-				.andExpect(status().isCreated());
-	}
-
 
 	@Test
 	void FirebaseCaseDelete() throws Exception{
