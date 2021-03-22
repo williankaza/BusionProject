@@ -5,6 +5,7 @@ import com.mytransfport.UserServices.DTO.Create.CreateUsuarioDTO;
 import com.mytransfport.UserServices.DTO.Update.UpdateUsuarioDTO;
 import com.mytransfport.UserServices.Entity.Usuario;
 import com.mytransfport.UserServices.Service.FirebaseService;
+import jdk.vm.ci.meta.Local;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserServicesApplicationTests {
 
 	Usuario usuario = new Usuario();
-
+	private String emailTeste = Math.abs(Math.random()*100) + "@teste.busion";
 
 
 	@LocalServerPort
@@ -47,10 +48,11 @@ class UserServicesApplicationTests {
 	void FirebaseCaseCreate() throws Exception {
 		CreateUsuarioDTO createUsuarioDTO = new CreateUsuarioDTO();
 		createUsuarioDTO.setNome("Teste JUNIT Create");
-		createUsuarioDTO.setEmail("junit@junit.com.br");
+		createUsuarioDTO.setEmail(emailTeste);
 		createUsuarioDTO.setSenha("123456");
 		createUsuarioDTO.setDataNascimento(LocalDateTime.now());
-		mockMvc.perform(post("/UserServices/createUser")
+
+		mockMvc.perform(post("/UserServices")
 				.contentType("application/json")
 				.content(objectMapper.writeValueAsString(createUsuarioDTO)))
 				.andExpect(status().isCreated());
@@ -60,7 +62,7 @@ class UserServicesApplicationTests {
 	@Test
 	void FirebaseCaseGetAll() throws Exception {
 		MvcResult resultActions = this.mockMvc
-				.perform(get("/UserServices/getAllUsers")
+				.perform(get("/UserServices/")
 						.contentType("application/json"))
 				.andExpect(status().isOk()).andReturn();
 
@@ -74,14 +76,18 @@ class UserServicesApplicationTests {
 	}
 	@Test
 	void FirebaseCaseUpdate() throws Exception {
-		UpdateUsuarioDTO updateUsuarioDTO = new UpdateUsuarioDTO();
+		FirebaseService fbs = new FirebaseService();
+		CreateUsuarioDTO updateUsuarioDTO = new CreateUsuarioDTO();
 
-		updateUsuarioDTO.setUid("ze8YKZc2ZgQk3UMsgxttzHfF15A2");
-		updateUsuarioDTO.setNome("Nome test JUNIT");
-		updateUsuarioDTO.setEmail("busion@junit.com");
+		String uid = fbs.getUserUidByEmail(emailTeste);
+
+		updateUsuarioDTO.setNome("Nome test Mudanmdo");
+		updateUsuarioDTO.setEmail("aaaa.axs@gmail.com");
+		updateUsuarioDTO.setDataNascimento(LocalDateTime.now());
+		updateUsuarioDTO.setSenha("111");
 
 		ResultActions resultActions = this.mockMvc
-				.perform(post("/UserServices/editUser")
+				.perform(put("/UserServices/ze8YKZc2ZgQk3UMsgxttzHfF15A2")
 						.contentType("application/json")
 						.content(objectMapper.writeValueAsString(updateUsuarioDTO)))
 				.andExpect(status().isOk());
@@ -90,7 +96,7 @@ class UserServicesApplicationTests {
 	@Test
 	void FirebaseCaseDelete() throws Exception{
 		FirebaseService fbs = new FirebaseService();
-		String uid = fbs.getUserUidByEmail("junit@junit.com.br");
+		String uid = fbs.getUserUidByEmail(emailTeste);
 		ResultActions resultActions = this.mockMvc
 				.perform(delete("/UserServices/deleteUser?uid=" + uid)
 						.contentType("application/json"))
