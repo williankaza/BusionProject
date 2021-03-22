@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { Router } from "@angular/router";
 import { ActivatedRoute } from "@angular/router";
-import { PoNotificationService, PoTableColumn, PoTableDetail } from "@po-ui/ng-components";
+import { PoNotificationService } from "@po-ui/ng-components";
 import { Onibus } from "src/app/core/generics";
 import { HttpService } from "src/app/services/http.service";
 
@@ -88,7 +88,7 @@ export class CadastroRotaComponent implements OnInit {
 		this.blockSave = true;
 		let json = this.createBodyRoute();
 		if (this.validaDados()) {
-			if (this.tipoOp == "inclusao"){
+			if (this.tipoOp == "inclusao") {
 				this.postRota(json);
 			} else {
 				this.putRota(json);
@@ -98,30 +98,39 @@ export class CadastroRotaComponent implements OnInit {
 		}
 	}
 
-	postRota(body){
-		
+	postRota(body) {
 		this.httpService.post("linha/" + this.lineId + "/rota", JSON.stringify(body), "mslinha/").subscribe((response) => {
 			this.blockSave = false;
 			this.poNotification.success("Nova Rota cadastrada com sucesso!");
 			this.router.navigateByUrl("/linhas/" + this.lineId + "/rotas" + response.id);
 		});
-	
 	}
 
-	putRota(body){
-		this.httpService.put("linha/" + this.lineId + "/rota/" + this.rotaId, JSON.stringify(body), "mslinha/").subscribe((response) => {
-			this.blockSave = false;
-			this.poNotification.success("Rota alterada com sucesso!");
-			this.router.navigateByUrl("/linhas/" + this.lineId + "/rotas" + response.id);
-		});
-	
+	putRota(body) {
+		this.httpService
+			.put("linha/" + this.lineId + "/rota/" + this.rotaId, JSON.stringify(body), "mslinha/")
+			.subscribe((response) => {
+				this.blockSave = false;
+				this.poNotification.success("Rota alterada com sucesso!");
+				this.router.navigateByUrl("/linhas/" + this.lineId + "/rotas" + response.id);
+			});
 	}
 
 	validaDados() {
 		let lOk: boolean = true;
 
-		if (this.rotaId == undefined) {
-			this.poNotification.error("Informe o id da Rota!");
+		if (this.latitude == undefined) {
+			this.poNotification.error("Informe a latitude da Rota!");
+			lOk = false;
+		}
+
+		if (this.longitude == undefined) {
+			this.poNotification.error("Informe a longitude da Rota!");
+			lOk = false;
+		}
+
+		if (this.ordem == undefined) {
+			this.poNotification.error("Informe a ordem da Rota!");
 			lOk = false;
 		}
 

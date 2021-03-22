@@ -80,29 +80,31 @@ export class CadastroOnibusComponent implements OnInit {
 		this.blockSave = true;
 		let json = this.createBodyBus();
 		if (this.validaDados()) {
-			if (this.tipoOp == "inclusao"){
-				this.postOnibus(json)
+			if (this.tipoOp == "inclusao") {
+				this.postOnibus(json);
 			} else {
-				this.putOnibus(json)
+				this.putOnibus(json);
 			}
 		} else {
 			this.blockSave = false;
 		}
 	}
 
-	putOnibus(body){
-		this.httpService.put("linha/" + this.lineId + '/onibus/' + this.busId, JSON.stringify(body), "mslinha/").subscribe((response) => {
-			this.blockSave = false;
-			this.poNotification.success("Ônibus alterado com sucesso!");
-			this.router.navigateByUrl("/linhas/" + this.lineId +"/onibus/"+ response.id);
-		});
+	putOnibus(body) {
+		this.httpService
+			.put("linha/" + this.lineId + "/onibus/" + this.busId, JSON.stringify(body), "mslinha/")
+			.subscribe((response) => {
+				this.blockSave = false;
+				this.poNotification.success("Ônibus alterado com sucesso!");
+				this.router.navigateByUrl("/linhas/" + this.lineId + "/onibus/" + response.id);
+			});
 	}
 
-	postOnibus(body){
-		this.httpService.post("linha/" + this.lineId + '/onibus', JSON.stringify(body), "mslinha/").subscribe((response) => {
+	postOnibus(body) {
+		this.httpService.post("linha/" + this.lineId + "/onibus", JSON.stringify(body), "mslinha/").subscribe((response) => {
 			this.blockSave = false;
 			this.poNotification.success("Novo ônibus cadastrada com sucesso!");
-			this.router.navigateByUrl("/linhas/" + this.lineId +"/onibus/"+ response.id);
+			this.router.navigateByUrl("/linhas/" + this.lineId + "/onibus/" + response.id);
 		});
 	}
 
