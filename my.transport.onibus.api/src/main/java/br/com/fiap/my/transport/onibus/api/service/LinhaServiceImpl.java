@@ -52,6 +52,10 @@ public class LinhaServiceImpl implements LinhaService {
 
     @Override
     public void delete(Long id) {
+        Linha linhaExistente = this.linhaRepository.findById(id).orElse(null);
+        if (linhaExistente == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A linha informada nao existe!");
+        }
         this.linhaRepository.deleteById(id);
     }
 

@@ -26,17 +26,6 @@ public class OnibusDTO {
         this.codigo = onibus.getCodigo();
         this.ativo = onibus.isAtivo();
         this.linha = onibus.getLinha();
-
-        Optional<Posicao> ultPosicao = onibus
-                .getPosicao()
-                .stream()
-                .sorted(Comparator.comparing(Posicao::getDataAtualizacao).reversed())
-                .findFirst();
-
-        if (!ultPosicao.isEmpty()){
-            this.posicao = ultPosicao.get();
-        }
-
     }
 
     public Long getId() {

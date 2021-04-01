@@ -11,9 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +30,10 @@ public class OnibusServiceImpl implements OnibusService {
     public OnibusDTO create(Long idLinha, OnibusCreateUpdateDTO onibusCreateUpdateDTO) {
         Linha linhaExistente = this.linhaRepository.findById(idLinha).orElse(null);
 
+        if (linhaExistente == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A linha informada nao existe!");
+        }
+
         Onibus novoOnibus = new Onibus(linhaExistente);
         novoOnibus.setCodigo( onibusCreateUpdateDTO.getCodigo() );
         novoOnibus.setAtivo( onibusCreateUpdateDTO.isAtivo() );
@@ -44,6 +46,9 @@ public class OnibusServiceImpl implements OnibusService {
     @Override
     public OnibusDTO update(Long idOnibus, OnibusCreateUpdateDTO onibusCreateUpdateDTO) {
         Onibus onibusExistente = this.findOnibusById(idOnibus);
+        if (onibusExistente == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O onibus informado nao existe!");
+        }
 
         onibusExistente.setAtivo( onibusCreateUpdateDTO.isAtivo() );
         onibusExistente.setCodigo( onibusCreateUpdateDTO.getCodigo() );
@@ -53,6 +58,10 @@ public class OnibusServiceImpl implements OnibusService {
 
     @Override
     public void delete(Long idOnibus) {
+        Onibus onibusExistente = this.findOnibusById(idOnibus);
+        if (onibusExistente == null){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O onibus informado nao existe!");
+        }
         this.onibusRepository.deleteById(idOnibus);
     }
 
