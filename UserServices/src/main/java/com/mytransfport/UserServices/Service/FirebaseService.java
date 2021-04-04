@@ -11,12 +11,10 @@ import com.mytransfport.UserServices.Entity.Agendamento;
 import com.mytransfport.UserServices.Entity.GeoLocalizacao;
 import com.mytransfport.UserServices.Entity.Usuario;
 import com.mytransfport.UserServices.Utils.EmailValidate;
-import jdk.vm.ci.meta.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -192,7 +190,7 @@ public class FirebaseService {
     }
 
 
-    public Agendamento createUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo){
+    public Agendamento createUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo) throws ExecutionException, InterruptedException {
 
         Agendamento agendamento = new Agendamento();
 
@@ -201,43 +199,49 @@ public class FirebaseService {
         agendamento.setOrigemGeo(new GeoPoint(origemGeo.getLatitude(),origemGeo.getLongitude()));
         agendamento.setDestinoGeo(new GeoPoint(destinoGeo.getLatitude(), destinoGeo.getLongitude()));
         agendamento.setDataAgendamentoLDT(dataAgendamento);
-        writeUserSchedule(agendamento);
+        agendamento.setIdAgendamento(String.valueOf(hashCode()));
+        writeUserSchedule(agendamento,uid);
 
         return agendamento;
     }
 
-    public void writeUserSchedule(Agendamento agendamento){
+    public void writeUserSchedule(Agendamento agendamento,String uid){
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        ApiFuture<WriteResult> collecApiFuture = dbFirestore.collection("schedules").document(agendamento.getUsuarioUid()).set(agendamento);
+        ApiFuture<WriteResult> collecApiFuture = dbFirestore.collection("schedules").document(uid).collection("agendamentos").document(agendamento.getIdAgendamento()).set(agendamento);
     }
 
-    public Agendamento getUserSchedule(String uid) throws ExecutionException, InterruptedException {
-        Agendamento agendamento = new Agendamento();
+    public ArrayList getUserSchedule(String uid) throws ExecutionException, InterruptedException {
+
         Firestore dbFirestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = dbFirestore.collection("schedules").document(uid);
-        ApiFuture<DocumentSnapshot> future = documentReference.get();
-        DocumentSnapshot document   = future.get();
+        ArrayList ar = new ArrayList();
 
-        agendamento.setOrigemGeo(new GeoPoint(document.getGeoPoint("origemGeo").getLatitude(),document.getGeoPoint("origemGeo").getLongitude()));
-        agendamento.setDestinoGeo(new GeoPoint(document.getGeoPoint("destinoGeo").getLatitude(),document.getGeoPoint("destinoGeo").getLongitude()));
-        agendamento.setDataAgendamentoLDT(document.getTimestamp("dataAgendamento").toSqlTimestamp().toLocalDateTime());
-        agendamento.setUsuarioUid(document.getString("usuarioUid"));
+        ApiFuture<QuerySnapshot> future = dbFirestore.collection("schedules").document(uid).collection("agendamentos").get();
+        List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+        for (QueryDocumentSnapshot document : documents) {
+            Agendamento agendamento = new Agendamento();
+            agendamento.setOrigemGeo(new GeoPoint(document.getGeoPoint("origemGeo").getLatitude(),document.getGeoPoint("origemGeo").getLongitude()));
+            agendamento.setDestinoGeo(new GeoPoint(document.getGeoPoint("destinoGeo").getLatitude(),document.getGeoPoint("destinoGeo").getLongitude()));
+            agendamento.setDataAgendamentoLDT(document.getTimestamp("dataAgendamento").toSqlTimestamp().toLocalDateTime());
+            agendamento.setUsuarioUid(document.getString("usuarioUid"));
+            agendamento.setIdAgendamento(document.getId());
+            ar.add(agendamento);
+        }
 
-        return agendamento;
+        return ar;
     }
 
-    public String deleteUserSchedule(String uid) throws FirebaseAuthException {
+    public String deleteUserSchedule(String uid,String idAgendamento) throws FirebaseAuthException {
 
         Firestore dbfirestore = FirestoreClient.getFirestore();
         try {
-            ApiFuture<WriteResult> writeResultApiFuture = dbfirestore.collection("schedules").document(uid).delete();
+            ApiFuture<WriteResult> writeResultApiFuture = dbfirestore.collection("schedules").document(uid).collection("agendamentos").document(idAgendamento).delete();
             return "Agendamento deletado com sucesso";
         }catch (Exception e){
             return "Erro ao deletar agendamento";
         }
     }
 
-    public Agendamento editUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo){
+    public Agendamento editUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo,String idAgendamento){
 
         Agendamento agendamento = new Agendamento();
 
@@ -246,10 +250,10 @@ public class FirebaseService {
         agendamento.setOrigemGeo(new GeoPoint(origemGeo.getLatitude(),origemGeo.getLongitude()));
         agendamento.setDestinoGeo(new GeoPoint(destinoGeo.getLatitude(), destinoGeo.getLongitude()));
         agendamento.setDataAgendamentoLDT(dataAgendamento);
+        agendamento.setIdAgendamento(idAgendamento);
 
-        writeUserSchedule(agendamento);
+        writeUserSchedule(agendamento,uid);
 
         return agendamento;
     }
-
 }

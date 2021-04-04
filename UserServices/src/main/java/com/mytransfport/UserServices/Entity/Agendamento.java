@@ -15,6 +15,16 @@ public class Agendamento {
     private GeoPoint destinoGeo;
     private LocalDateTime dataAgendamentoLDT;
 
+    public String getIdAgendamento() {
+        return idAgendamento;
+    }
+
+    public void setIdAgendamento(String idAgendamento) {
+        this.idAgendamento = idAgendamento;
+    }
+
+    private String idAgendamento;
+
     public LocalDateTime getDataAgendamentoLDT() {
         return dataAgendamentoLDT;
     }

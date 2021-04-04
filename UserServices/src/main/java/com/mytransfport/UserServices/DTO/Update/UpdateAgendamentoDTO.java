@@ -8,6 +8,15 @@ public class UpdateAgendamentoDTO {
     private LocalDateTime dataAgendamento;
     private GeoLocalizacao origemGeo;
     private GeoLocalizacao destinoGeo;
+    private String idAgendamento;
+
+    public String getIdAgendamento() {
+        return idAgendamento;
+    }
+
+    public void setIdAgendamento(String idAgendamento) {
+        this.idAgendamento = idAgendamento;
+    }
 
     public LocalDateTime getDataAgendamento() {
         return dataAgendamento;
