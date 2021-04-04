@@ -1,29 +1,41 @@
 package com.mytransfport.UserServices.Entity;
 
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.GeoPoint;
 import com.google.type.DateTime;
+
+import java.time.LocalDateTime;
 
 public class Agendamento {
 
 
-    private Usuario usuarioUid;
-    private DateTime dataAgendamento;
+    private String usuarioUid;
+    private Timestamp dataAgendamento;
     private GeoPoint origemGeo;
     private GeoPoint destinoGeo;
+    private LocalDateTime dataAgendamentoLDT;
 
-    public Usuario getUsuarioUid() {
+    public LocalDateTime getDataAgendamentoLDT() {
+        return dataAgendamentoLDT;
+    }
+
+    public void setDataAgendamentoLDT(LocalDateTime dataAgendamentoLDT) {
+        this.dataAgendamentoLDT = dataAgendamentoLDT;
+    }
+
+    public String getUsuarioUid() {
         return usuarioUid;
     }
 
-    public void setUsuarioUid(Usuario usuarioUid) {
+    public void setUsuarioUid(String usuarioUid) {
         this.usuarioUid = usuarioUid;
     }
 
-    public DateTime getDataAgendamento() {
+    public Timestamp getDataAgendamento() {
         return dataAgendamento;
     }
 
-    public void setDataAgendamento(DateTime dataAgendamento) {
+    public void setDataAgendamento(Timestamp dataAgendamento) {
         this.dataAgendamento = dataAgendamento;
     }
 

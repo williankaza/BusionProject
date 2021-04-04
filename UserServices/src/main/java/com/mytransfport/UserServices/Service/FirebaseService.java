@@ -2,13 +2,16 @@ package com.mytransfport.UserServices.Service;
 
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.*;
 import com.google.firebase.auth.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.cloud.FirestoreClient;
+import com.mytransfport.UserServices.Entity.Agendamento;
+import com.mytransfport.UserServices.Entity.GeoLocalizacao;
 import com.mytransfport.UserServices.Entity.Usuario;
 import com.mytransfport.UserServices.Utils.EmailValidate;
-import okhttp3.Response;
+import jdk.vm.ci.meta.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,9 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -188,6 +189,67 @@ public class FirebaseService {
         }catch(Exception e){
             return null;
         }
+    }
+
+
+    public Agendamento createUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo){
+
+        Agendamento agendamento = new Agendamento();
+
+        agendamento.setUsuarioUid(uid);
+        agendamento.setDataAgendamento(Timestamp.parseTimestamp(String.valueOf(dataAgendamento)));
+        agendamento.setOrigemGeo(new GeoPoint(origemGeo.getLatitude(),origemGeo.getLongitude()));
+        agendamento.setDestinoGeo(new GeoPoint(destinoGeo.getLatitude(), destinoGeo.getLongitude()));
+        agendamento.setDataAgendamentoLDT(dataAgendamento);
+        writeUserSchedule(agendamento);
+
+        return agendamento;
+    }
+
+    public void writeUserSchedule(Agendamento agendamento){
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        ApiFuture<WriteResult> collecApiFuture = dbFirestore.collection("schedules").document(agendamento.getUsuarioUid()).set(agendamento);
+    }
+
+    public Agendamento getUserSchedule(String uid) throws ExecutionException, InterruptedException {
+        Agendamento agendamento = new Agendamento();
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference documentReference = dbFirestore.collection("schedules").document(uid);
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot document   = future.get();
+
+        agendamento.setOrigemGeo(new GeoPoint(document.getGeoPoint("origemGeo").getLatitude(),document.getGeoPoint("origemGeo").getLongitude()));
+        agendamento.setDestinoGeo(new GeoPoint(document.getGeoPoint("destinoGeo").getLatitude(),document.getGeoPoint("destinoGeo").getLongitude()));
+        agendamento.setDataAgendamentoLDT(document.getTimestamp("dataAgendamento").toSqlTimestamp().toLocalDateTime());
+        agendamento.setUsuarioUid(document.getString("usuarioUid"));
+
+        return agendamento;
+    }
+
+    public String deleteUserSchedule(String uid) throws FirebaseAuthException {
+
+        Firestore dbfirestore = FirestoreClient.getFirestore();
+        try {
+            ApiFuture<WriteResult> writeResultApiFuture = dbfirestore.collection("schedules").document(uid).delete();
+            return "Agendamento deletado com sucesso";
+        }catch (Exception e){
+            return "Erro ao deletar agendamento";
+        }
+    }
+
+    public Agendamento editUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo){
+
+        Agendamento agendamento = new Agendamento();
+
+        agendamento.setUsuarioUid(uid);
+        agendamento.setDataAgendamento(Timestamp.parseTimestamp(String.valueOf(dataAgendamento)));
+        agendamento.setOrigemGeo(new GeoPoint(origemGeo.getLatitude(),origemGeo.getLongitude()));
+        agendamento.setDestinoGeo(new GeoPoint(destinoGeo.getLatitude(), destinoGeo.getLongitude()));
+        agendamento.setDataAgendamentoLDT(dataAgendamento);
+
+        writeUserSchedule(agendamento);
+
+        return agendamento;
     }
 
 }
