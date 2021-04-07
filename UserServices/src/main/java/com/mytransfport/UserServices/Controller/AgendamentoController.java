@@ -39,9 +39,9 @@ public class AgendamentoController {
     @DeleteMapping("{uidUserSchedule}/{idSchedule}")
     @ResponseStatus( HttpStatus.NO_CONTENT )
     public String deleteUserSchedule(@PathVariable String uidUserSchedule,
-                                     @RequestParam String idAgendamento) throws FirebaseAuthException {
+                                     @PathVariable String idSchedule) throws FirebaseAuthException {
         FirebaseService fbs = new FirebaseService();
-        return fbs.deleteUserSchedule(uidUserSchedule,idAgendamento);
+        return fbs.deleteUserSchedule(uidUserSchedule,idSchedule);
     }
 
     @PutMapping("{uidUserSchedule}")

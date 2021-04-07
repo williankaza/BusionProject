@@ -5,7 +5,6 @@ import com.mytransfport.UserServices.DTO.Create.CreateUsuarioDTO;
 import com.mytransfport.UserServices.DTO.Update.UpdateUsuarioDTO;
 import com.mytransfport.UserServices.Entity.Usuario;
 import com.mytransfport.UserServices.Service.FirebaseService;
-import jdk.vm.ci.meta.Local;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
