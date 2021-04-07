@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/AgendamentoServices")
+@RequestMapping("AgendamentoServices")
 public class AgendamentoController {
 
     @Autowired
@@ -36,7 +36,7 @@ public class AgendamentoController {
         return fbs.getUserSchedule(uidUserSchedule);
     }
 
-    @DeleteMapping("{uidUserSchedule}")
+    @DeleteMapping("{uidUserSchedule}/{idSchedule}")
     @ResponseStatus( HttpStatus.NO_CONTENT )
     public String deleteUserSchedule(@PathVariable String uidUserSchedule,
                                      @RequestParam String idAgendamento) throws FirebaseAuthException {
