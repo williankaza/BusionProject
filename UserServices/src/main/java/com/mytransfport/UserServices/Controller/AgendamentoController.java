@@ -24,7 +24,7 @@ public class AgendamentoController {
 
     @PostMapping("")
     @ResponseStatus( HttpStatus.CREATED )
-    public Agendamento createUserSchedule(@RequestBody CreateAgendamentoDTO createAgendamentoDTO) throws FirebaseAuthException, ExecutionException, InterruptedException {
+    public Agendamento createUserSchedule(@RequestBody CreateAgendamentoDTO createAgendamentoDTO) throws Exception {
         FirebaseService fbs = new FirebaseService();
         return fbs.createUserSchedule(createAgendamentoDTO.getUsuarioUid(), createAgendamentoDTO.getDataAgendamento(), createAgendamentoDTO.getOrigemGeo(), createAgendamentoDTO.getDestinoGeo());
     }
@@ -45,7 +45,7 @@ public class AgendamentoController {
 
     @PutMapping("{uidUserSchedule}")
     public Agendamento editUserSchedule(@PathVariable String uidUserSchedule,
-                                        @RequestBody UpdateAgendamentoDTO updateAgendamentoDTO ) throws FirebaseAuthException {
+                                        @RequestBody UpdateAgendamentoDTO updateAgendamentoDTO ) throws Exception {
         FirebaseService fbs = new FirebaseService();
         return fbs.editUserSchedule(uidUserSchedule, updateAgendamentoDTO.getDataAgendamento(), updateAgendamentoDTO.getOrigemGeo(), updateAgendamentoDTO.getDestinoGeo(),updateAgendamentoDTO.getIdAgendamento());
     }

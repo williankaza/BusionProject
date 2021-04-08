@@ -14,6 +14,7 @@ import com.mytransfport.UserServices.Utils.EmailValidate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import sun.security.provider.certpath.OCSPResponse;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -190,18 +191,20 @@ public class FirebaseService {
     }
 
 
-    public Agendamento createUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo) throws ExecutionException, InterruptedException {
+    public Agendamento createUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo) throws Exception {
 
         Agendamento agendamento = new Agendamento();
-
-        agendamento.setUsuarioUid(uid);
-        agendamento.setDataAgendamento(Timestamp.parseTimestamp(String.valueOf(dataAgendamento)));
-        agendamento.setOrigemGeo(new GeoPoint(origemGeo.getLatitude(),origemGeo.getLongitude()));
-        agendamento.setDestinoGeo(new GeoPoint(destinoGeo.getLatitude(), destinoGeo.getLongitude()));
-        agendamento.setDataAgendamentoLDT(dataAgendamento);
-        agendamento.setIdAgendamento(String.valueOf(hashCode()));
-        writeUserSchedule(agendamento,uid);
-
+        try {
+            agendamento.setUsuarioUid(uid);
+            agendamento.setDataAgendamento(Timestamp.parseTimestamp(String.valueOf(dataAgendamento)));
+            agendamento.setOrigemGeo(new GeoPoint(origemGeo.getLatitude(),origemGeo.getLongitude()));
+            agendamento.setDestinoGeo(new GeoPoint(destinoGeo.getLatitude(), destinoGeo.getLongitude()));
+            agendamento.setDataAgendamentoLDT(dataAgendamento);
+            agendamento.setIdAgendamento(String.valueOf(hashCode()));
+            writeUserSchedule(agendamento,uid);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
         return agendamento;
     }
 
@@ -241,18 +244,21 @@ public class FirebaseService {
         }
     }
 
-    public Agendamento editUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo,String idAgendamento){
+    public Agendamento editUserSchedule(String uid, LocalDateTime dataAgendamento, GeoLocalizacao origemGeo, GeoLocalizacao destinoGeo,String idAgendamento) throws Exception {
 
         Agendamento agendamento = new Agendamento();
+        try {
+            agendamento.setUsuarioUid(uid);
+            agendamento.setDataAgendamento(Timestamp.parseTimestamp(String.valueOf(dataAgendamento)));
+            agendamento.setOrigemGeo(new GeoPoint(origemGeo.getLatitude(),origemGeo.getLongitude()));
+            agendamento.setDestinoGeo(new GeoPoint(destinoGeo.getLatitude(), destinoGeo.getLongitude()));
+            agendamento.setDataAgendamentoLDT(dataAgendamento);
+            agendamento.setIdAgendamento(idAgendamento);
 
-        agendamento.setUsuarioUid(uid);
-        agendamento.setDataAgendamento(Timestamp.parseTimestamp(String.valueOf(dataAgendamento)));
-        agendamento.setOrigemGeo(new GeoPoint(origemGeo.getLatitude(),origemGeo.getLongitude()));
-        agendamento.setDestinoGeo(new GeoPoint(destinoGeo.getLatitude(), destinoGeo.getLongitude()));
-        agendamento.setDataAgendamentoLDT(dataAgendamento);
-        agendamento.setIdAgendamento(idAgendamento);
-
-        writeUserSchedule(agendamento,uid);
+            writeUserSchedule(agendamento,uid);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
 
         return agendamento;
     }
