@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from "@angular
 import { tap, catchError } from "rxjs/operators";
 
 const httpUri = "uri/";
+const httpUrl = "https://my-transport-onibus-api.azurewebsites.net/";
 
 @Injectable({
 	providedIn: "root",
@@ -18,8 +19,9 @@ export class HttpService {
 	}
 
 	get(url: string, uri: string = httpUri) {
+
 		return this.http
-			.get<any>(uri + url, {
+			.get<any>(this.verifyURL(httpUrl, uri) + url, {
 				headers: this.headerParams,
 				params: this.optionParams,
 			})
@@ -28,7 +30,7 @@ export class HttpService {
 
 	post(url: string, body: string, uri: string = httpUri) {
 		return this.http
-			.post<any>(uri + url, body, {
+			.post<any>(this.verifyURL(httpUrl, uri) + url, body, {
 				headers: this.headerParams,
 				params: this.optionParams,
 			})
@@ -37,7 +39,7 @@ export class HttpService {
 
 	put(url: string, body: string, uri: string = httpUri) {
 		return this.http
-			.put<any>(uri + url, body, {
+			.put<any>(this.verifyURL(httpUrl, uri) + url, body, {
 				headers: this.headerParams,
 				params: this.optionParams,
 			})
@@ -46,5 +48,13 @@ export class HttpService {
 
 	showError(error: HttpErrorResponse) {
 		console.error("Erro na requisição: " + error);
+	}
+
+	verifyURL(consURL: string, uri: string){
+		if (consURL == ""){
+			return uri;
+		} else {
+			return consURL
+		}
 	}
 }

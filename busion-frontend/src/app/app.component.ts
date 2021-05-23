@@ -12,7 +12,6 @@ export class AppComponent {
 	constructor(private router: Router) {}
 	readonly menus: Array<PoMenuItem> = [
 		{ label: "Lines", action: () => this.goTo("linhas") },
-		{ label: "User", action: () => this.goTo("usuarios") },
 	];
 
 	private goTo(url: string) {

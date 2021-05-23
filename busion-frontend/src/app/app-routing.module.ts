@@ -14,8 +14,8 @@ const routes: Routes = [
 			{
 				path: "",
 				pathMatch: "full",
-				redirectTo: "usuarios",
-			},
+				redirectTo: "linhas",
+			},/*
 			{
 				path: "usuarios",
 				children: [
@@ -35,7 +35,7 @@ const routes: Routes = [
 						component: CadastroUsuarioComponent,
 					},
 				],
-			},
+			},*/
 			{
 				path: "linhas",
 				children: [
