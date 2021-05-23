@@ -184,7 +184,7 @@ export class CadastroLinhaComponent implements OnInit {
 	}
 
 	goBack() {
-		this.router.navigateByUrl("/usuarios");
+		this.router.navigateByUrl("/linhas");
 	}
 
 	goNewBus() {
