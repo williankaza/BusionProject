@@ -87,7 +87,7 @@ export class ConsultaLinhaComponent implements OnInit {
 	}
 
 	goToCadastro() {
-		window.open(this.router.url + "/novo");
+		this.router.navigateByUrl(this.router.url + "/novo");
 	}
 
 	loadGrid() {
