@@ -73,7 +73,7 @@ export class ConsultaLinhaComponent implements OnInit {
 	];
 
 	goToCadastroAlterar(lineId: number) {
-		window.open(this.router.url + "/" + lineId);
+		this.router.navigateByUrl(this.router.url + "/" + lineId);
 	}
 
 	listLines: Array<Lines>;
